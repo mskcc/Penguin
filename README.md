@@ -13,7 +13,6 @@ Pipeline to Analyze ecDNA in collaboration with BoundlessBio
 
 
 
-
 ### Bash Commands
 
 #### Manipulate MAF file
@@ -28,6 +27,40 @@ head -n 2 data_mutations_extended.txt | tail -n 1 | awk -F'\t' '{for (i=1; i<NF;
 
 # Check for Samples that belong to IM7
 head -n 20 data_mutations_extended.txt | awk -F'\t' '{if ($17~/IM7/){print $17 "\t" NR}}'
+```
+
+#### Running Echo Container
+
+
+```
+docker run \
+-v "/Users/sumans/Projects/Project_BoundlessBio/data/input/beds/IMPACT505_picard_baits-1.interval_list:/home/bed/IMPACT505_picard_baits.bed" \
+-v /Users/sumans/Projects/Project_BoundlessBio/data/input/bams/:/home/input/ \
+-v /Users/sumans/Projects/Project_BoundlessBio/data/output/:/home/output/ \
+-a stdout \
+-a stderr \
+boundlessbio/mskcc:echo_preprocess \
+--sample "UH524913-T" \
+--bam_file "/home/input/UH524913-T.bam" \
+--cnn_file "/home/output/UH524913-T.cnn" \
+--bed_file IMPACT505_picard_baits.bed \
+--step process_cnvkit
+
+
+```
+
+```
+docker run \
+-v /Users/sumans/Projects/Project_BoundlessBio/data/input/:/home/input/ \
+-v /Users/sumans/Projects/Project_BoundlessBio/data/output/:/home/output/ \
+-a stdout \
+-a stderr \
+boundlessbio/mskcc:echo_preprocess \
+--sample "P-0066791-T02-IM7" \
+--maf_file /home/input/data_mutations_extended.txt \
+--output_file /home/output/my_sample_histogram.csv \
+--step process_vcf
+
 ```
 
 
