@@ -1,13 +1,50 @@
+
+#sampleID="P-0060192-T01-IM7"
+
+
+def convertT2N(sampleID):
+
+    ID=sampleID.split('-')
+
+    ID[2]='N01'
+
+    ID_N='-'.join(ID)
+
+    return(ID_N)
+
+
+def convertWgs2Bam(sampleID):
+
+    ID=sampleID.split('-')
+    BAMID="s_"+'_'.join(ID)
+    return(BAMID)
+
+
+import argparse
 import os
 import sys
 
-sampleID=sys.argv[1]
-#sampleID="P-0060192-T01-IM7"
+#sampleID=sys.argv[1]
 
-ID=sampleID.split('-')
+# required arg
 
-ID[2]='N01'
+parser = argparse.ArgumentParser()
 
-ID_N='-'.join(ID)
+parser.add_argument('--sID', required=True)
 
-print(ID_N)
+parser.add_argument('--aType', required=True)
+
+args = parser.parse_args()
+
+
+sampleID=args.sID
+
+analysisType=args.aType
+
+if analysisType == "impact_N":
+    outputID=convertT2N(sampleID)
+    print(outputID)
+
+elif analysisType == "WGS":
+    outputID=convertWgs2Bam(sampleID)
+    print(outputID)

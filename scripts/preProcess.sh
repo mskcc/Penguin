@@ -23,6 +23,11 @@ shift
 seqType=$1
 shift
 
+sampleType=$1
+shift
+
+bamID=$1
+shift
 
 #keyFile="/Users/sumans/Projects/Project_BoundlessBio/data/input/key.txt"
 keyFile="/juno/res/dmpcollab/dmprequest/12-245/key.txt"
@@ -33,9 +38,6 @@ image="mskcc_echo_preprocess.sif"
 
 imagePath=$dataDir/$image
 #echo $imagePath
-
-mafFile="data_mutations_extended.txt"
-mafPath=$dataDir/input/
 
 
 flagDir=$dataDir/flags
@@ -54,9 +56,29 @@ if [[ ! -f $flag_done ]]; then
 
     rm -rf $flag_inProcess && rm -rf $flag_fail
 
-    bamFilePath=`python3.8 generateBAMFilePath.py $keyFile $bamMirrorPath $sampleID`
+    if [[ "$seqType" == "IMPACT" ]]; then
+      bamFilePath=`python3.8 generateBAMFilePath.py $keyFile $bamMirrorPath $sampleID`
+      echo "BAM File Path=$bamFilePath"
 
-    echo "BAM File Path=$bamFilePath"
+      mafFile="data_mutations_extended.txt"
+      mafPath=$dataDir/input/
+
+      sampleID_MAF=${bamID}
+
+    elif [[ "$seqType" == "WGS" ]]; then
+      bamFilePath=${bamMirrorPath}/bams/${bamID}/${bamID}.bam
+      echo "BAM File Path=$bamFilePath"
+
+      a1=${bamMirrorPath}/somatic
+      a2=$(find ${a1} -maxdepth 1  -name ${bamID}* -print)
+      a3=$(basename ${a2})
+      mafFile=${a3}.somatic.final.maf
+      mafPath=${a2}/combined_mutations/
+
+      sampleID_MAF=${bamID}
+
+    fi
+
 
     if [[ -f $bamFilePath ]]; then
 
@@ -83,7 +105,7 @@ if [[ ! -f $flag_done ]]; then
           --bind ${bamDir}:/home/input/ \
           --bind ${outPath}:/home/output/ \
           ${imagePath} \
-          --sample ${sampleID} \
+          --sample ${sampleID_MAF} \
           --bam_file /home/input/${bamName} \
           --cnn_file /home/output/${outFile_step1} \
           --bed_file ${bedNameImage} \
@@ -93,24 +115,26 @@ if [[ ! -f $flag_done ]]; then
         echo $cmd
         echo
 
-        eval $cmd
+        #eval $cmd
 
+        if [[ "$sampleType" == "T" ]]; then
 
-        cmd="singularity run \
-          --bind ${mafPath}:/home/input/ \
-          --bind ${outPath}:/home/output/ \
-          ${imagePath} \
-          --sample ${sampleID} \
-          --maf_file /home/input/${mafFile} \
-          --output_file /home/output/${outFile_step2} \
-          --step process_vcf"
+            cmd="singularity run \
+              --bind ${mafPath}:/home/input/ \
+              --bind ${outPath}:/home/output/ \
+              ${imagePath} \
+              --sample ${sampleID_MAF} \
+              --maf_file /home/input/${mafFile} \
+              --output_file /home/output/${outFile_step2} \
+              --step process_vcf"
 
-        echo "Pre-Process Step 2....."
-        echo $cmd
+            echo "Pre-Process Step 2....."
+            echo $cmd
 
-        echo
+            echo
 
-        eval $cmd
+            #eval $cmd
+        fi
 
         if [ $? -eq 0 ]; then
 

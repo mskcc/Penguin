@@ -1,8 +1,8 @@
 
 
 # Sequencing Type - WGS or IMPACT
-seqType="IMPACT"
-
+#seqType="IMPACT"
+seqType="WGS"
 
 impactPanel="IM7"
 sampleTrackerFile="Data-2021-11-4.xlsx"
@@ -25,63 +25,89 @@ bamMirrorPath_wes="/juno/work/tempo/wes_repo/Results/v1.4.x/cohort_level/MSKWESR
 bedName_impact="IMPACT505_picard_baits-1.interval_list"
 bedNameImage_impact="IMPACT505_picard_baits.bed"
 
+bedName_wes="IMPACT505_picard_baits-1.interval_list"
+bedNameImage_wes="IMPACT505_picard_baits.bed"
+
 count=0;
 
 if [[ "$seqType" == "IMPACT" ]]; then
 
  for i in $(cat $outputManifestPath| tail -n +2 | awk '{print $1}'); do
 
+   for j in N T; do
+
+
    # For Tumor Sample
+      if [[ "$j" == "T" ]]; then
+          sampleType=$j
+          sampleID=$i
+          bamID=${sampleID}
 
-    sampleID=$i
+   # For Normal Paired Sample
+      elif [[  "$j" == "N" ]]; then
+          sampleType=$j
+          sampleID=`python convertT2N.py --sID $i --aType impact_N`
+          bamID=${sampleID}
+      fi
 
-    echo "Sample=$sampleID"
-    cmd="sh preProcess.sh \
-          $bamMirrorPath_impact \
-          $sampleID \
-          $bedName_impact \
-          $bedNameImage_impact \
-          $seqType"
+      echo "Sample=$sampleID"
+      cmd="sh preProcess.sh \
+            $bamMirrorPath_impact \
+            $sampleID \
+            $bedName_impact \
+            $bedNameImage_impact \
+            $seqType \
+            $sampleType \
+            $bamID"
 
-    echo $cmd
-    echo
+      echo $cmd
+      echo
 
-    eval $cmd
-    echo "Done"
-    echo
-    echo
+      eval $cmd
+      echo "Done"
+      echo
+      echo
 
-    count=$((count+1))
+      count=$((count+1))
 
-    # For Normal Paired Sample
-
-    sampleID=`python convertT2N.py $i`
-
-    echo "Sample=$sampleID"
-    cmd="sh preProcess.sh \
-          $bamMirrorPath_impact \
-          $sampleID \
-          $bedName_impact \
-          $bedNameImage_impact \
-          $seqType"
-
-    echo $cmd
-    echo
-
-    eval $cmd
-    echo "Done"
-    echo
-    echo
-
-    count=$((count+1))
-
-
+    done
 
   done
 
 elif [[ "$seqType" == "WGS" ]]; then
 
-   echo "Nothing to do yet"
+  for i in $(cat $outputManifestPath| tail -n +2 | awk '{print $1"_"$3}'); do
+
+    echo $i
+    sampleType="T"
+    sampleID=$(echo $i | awk -F'_' '{print $1}')
+    cmoID=$(echo $i | awk -F'_' '{print $2}')
+    bamID=`python convertT2N.py --sID $cmoID --aType WGS`
+
+    echo "Sample=$sampleID"
+    cmd="sh preProcess.sh \
+          $bamMirrorPath_wes \
+          $sampleID \
+          $bedName_wes \
+          $bedNameImage_wes \
+          $seqType \
+          $sampleType \
+          $bamID"
+
+    echo $cmd
+    echo
+    #echo "hello"
+
+    eval $cmd
+
+
+    echo "Done"
+    echo
+    echo
+
+    count=$((count+1))
+
+  done
 
 fi
 
