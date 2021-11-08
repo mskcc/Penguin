@@ -57,7 +57,7 @@ if [[ ! -f $flag_done ]]; then
     rm -rf $flag_inProcess && rm -rf $flag_fail
 
     if [[ "$seqType" == "IMPACT" ]]; then
-      bamFilePath=`python3.8 generateBAMFilePath.py $keyFile $bamMirrorPath $sampleID`
+      bamFilePath=`python3.8 generateBAMFilePath.py $keyFile $bamMirrorPath $sampleID $sampleType`
       echo "BAM File Path=$bamFilePath"
 
       mafFile="data_mutations_extended.txt"

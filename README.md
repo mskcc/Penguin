@@ -31,6 +31,7 @@ head -n 20 data_mutations_extended.txt | awk -F'\t' '{if ($17~/IM7/){print $17 "
 
 #### Running Echo Container
 
+##### Docker
 
 ```
 docker run \
@@ -62,6 +63,46 @@ boundlessbio/mskcc:echo_preprocess \
 --step process_vcf
 
 ```
+##### Singularity
+```
+singularity pull --docker-login --dir ~/Projects/Project_BoundlessBio/data/  docker://boundlessbio/mskcc:echo_preprocess
+```
+
+```
+singularity run \
+  --bind /home/sumans/Projects/Project_BoundlessBio/data/input/:/home/input/ \
+  --bind /home/sumans/Projects/Project_BoundlessBio/data/output/:/home/output/ \
+  ${imagePath} \
+  --sample ”P-0066791-T02-IM7” \
+  --maf_file /home/input/data_mutations_extended.txt \
+  --output_file /home/output/my_sample_histogram.csv \
+  --step process_vcf
+
+  ```
+#### Installing and Sharing on the Google Cloud Bucket
+##### Installation
+```
+curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-363.0.0-linux-x86_64.tar.gz
+
+tar -xf google-cloud-sdk-363.0.0-linux-x86_64.tar.gz
+
+./google-cloud-sdk/install.sh
+
+./google-cloud-sdk/bin/gcloud init
+
+```
+##### Data upload
+
+```
+./google-cloud-sdk/bin/gsutil  ls gs://bbi-mskcc
+```
+
+
+
+
+
+
+
 
 
 ### Resources
