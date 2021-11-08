@@ -65,7 +65,7 @@ if [[ ! -f $flag_done ]]; then
 
       sampleID_MAF=${bamID}
 
-    elif [[ "$seqType" == "WGS" ]]; then
+    elif [[ "$seqType" == "WES" ]]; then
       bamFilePath=${bamMirrorPath}/bams/${bamID}/${bamID}.bam
       echo "BAM File Path=$bamFilePath"
 
@@ -115,7 +115,7 @@ if [[ ! -f $flag_done ]]; then
         echo $cmd
         echo
 
-        #eval $cmd
+        eval $cmd
 
         if [[ "$sampleType" == "T" ]]; then
 
@@ -133,7 +133,7 @@ if [[ ! -f $flag_done ]]; then
 
             echo
 
-            #eval $cmd
+            eval $cmd
         fi
 
         if [ $? -eq 0 ]; then

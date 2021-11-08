@@ -45,6 +45,6 @@ if analysisType == "impact_N":
     outputID=convertT2N(sampleID)
     print(outputID)
 
-elif analysisType == "WGS":
+elif analysisType == "WES":
     outputID=convertWgs2Bam(sampleID)
     print(outputID)
