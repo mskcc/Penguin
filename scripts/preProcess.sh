@@ -1,13 +1,22 @@
 
 #!/bin/bash
 
+#source /home/sumans/miniconda2/bin/activate  base && conda activate "gddP2"
+
+
+#conda list
+
 set -e
 set -o pipefail
+
+
+source /home/sumans/miniconda2/bin/activate gddP2
 
 
 module load singularity/3.7.1
 
 bamMirrorPath=$1
+echo $bamMirrorPath
 shift
 
 sampleID=$1
@@ -37,7 +46,7 @@ dataDir=/home/sumans/Projects/Project_BoundlessBio/data
 image="mskcc_echo_preprocess.sif"
 
 imagePath=$dataDir/$image
-#echo $imagePath
+echo $imagePath
 
 
 flagDir=$dataDir/flags
@@ -69,12 +78,16 @@ if [[ ! -f $flag_done ]]; then
       bamFilePath=${bamMirrorPath}/bams/${bamID}/${bamID}.bam
       echo "BAM File Path=$bamFilePath"
 
-      a1=${bamMirrorPath}/somatic
-      a2=$(find ${a1} -maxdepth 1  -name ${bamID}* -print)
-      a3=$(basename ${a2})
-      mafFile=${a3}.somatic.final.maf
-      mafPath=${a2}/combined_mutations/
+      if [[ "$sampleType" == "T" ]]; then
 
+        a1=${bamMirrorPath}/somatic
+        a2=$(find ${a1} -maxdepth 1  -name ${bamID}* -print)
+        a3=$(basename ${a2})
+        mafFile=${a3}.somatic.final.maf
+        mafPath=${a2}/combined_mutations/
+
+      fi
+      
       sampleID_MAF=${bamID}
 
     fi

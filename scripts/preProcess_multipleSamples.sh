@@ -1,22 +1,38 @@
+#!/bin/bash
+
+set -e
+set -o pipefail
+
+source /home/sumans/miniconda2/bin/activate gddP2
+#conda activate gddP2
 
 
 # Sequencing Type - WGS or IMPACT
 #seqType="IMPACT"
-seqType="WES"
+#seqType="WES"
+seqType=$1
+shift
 
-impactPanel="IM7"
+
+#impactPanel="IM7"
+impactPanel=$1
+shift
+
 sampleTrackerFile="Data-2021-11-4.xlsx"
+mapFile_wes="MSKWESRP.pairing.tsv"
 
 dataDir=/home/sumans/Projects/Project_BoundlessBio/data
 
 inputDir=${dataDir}/input
 sampleTrackerFilePath=${inputDir}/${sampleTrackerFile}
+mapFile_wes_Path=${inputDir}/${mapFile_wes}
 
 outputManifest="sampleManifest_${impactPanel}.txt"
 outputManifestPath=${inputDir}/${outputManifest}
 
-
-python3.8 generateManifest.py $impactPanel $sampleTrackerFilePath $outputManifestPath
+if [[ ! -f $outputManifest ]]; then
+  python3.8 generateManifest.py $impactPanel $sampleTrackerFilePath $outputManifestPath
+fi
 
 
 bamMirrorPath_impact="/juno/res/dmpcollab/dmpshare/share/irb12_245"
@@ -80,34 +96,49 @@ elif [[ "$seqType" == "WES" ]]; then
 
   for i in $(cat $outputManifestPath| tail -n +2 | awk '{print $1"_"$3}'); do
 
-    echo $i
-    sampleType="T"
-    sampleID=$(echo $i | awk -F'_' '{print $1}')
-    cmoID=$(echo $i | awk -F'_' '{print $2}')
-    bamID=`python convertT2N.py --sID $cmoID --aType WES`
+    for j in N T; do
 
-    echo "Sample=$sampleID"
-    cmd="sh ./preProcess.sh \
-          $bamMirrorPath_wes \
-          $sampleID \
-          $bedName_wes \
-          $bedNameImage_wes \
-          $seqType \
-          $sampleType \
-          $bamID"
+      if [[ "$j" == "T" ]]; then
+        #echo $i
+        sampleType=$j
+        sampleID=$(echo $i | awk -F'_' '{print $1}')
+        cmoID=$(echo $i | awk -F'_' '{print $2}')
+        bamID=`python convertT2N.py --sID $cmoID --aType WES`
 
-    echo $cmd
-    echo
-    #echo "hello"
+      elif [[  "$j" == "N" ]]; then
+        sampleType=$j
+        sampleID_T=$(echo $i | awk -F'_' '{print $1}')
+        sampleID=`python convertT2N.py --sID $sampleID_T --aType impact_N`
+        cmoID=$(echo $i | awk -F'_' '{print $2}')
+        bamID_T=`python convertT2N.py --sID $cmoID --aType WES`
+        bamID=`python convertT2N.py --sID $bamID_T --aType WES_P --mapFile $mapFile_wes_Path`
 
-    eval ${cmd}
+      fi
+
+      echo "Sample=$sampleID"
+      cmd="sh ./preProcess.sh \
+            $bamMirrorPath_wes \
+            $sampleID \
+            $bedName_wes \
+            $bedNameImage_wes \
+            $seqType \
+            $sampleType \
+            $bamID"
+
+      echo $cmd
+      echo
+      #echo "hello"
+
+      eval ${cmd}
 
 
-    echo "Done"
-    echo
-    echo
+      echo "Done"
+      echo
+      echo
 
-    count=$((count+1))
+      count=$((count+1))
+
+    done
 
   done
 
