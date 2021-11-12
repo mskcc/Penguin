@@ -8,7 +8,9 @@ mkdir -p $logDir 2>/dev/null
 ts=$(date +%Y%m%d%H%M%S)
 
 #seqType="IMPACT"
-impactPanel="IM7"
+#impactPanel="IM7"
+impactPanel="IM6"
+aType=2
 
 for seqType in IMPACT WES; do
 
@@ -21,7 +23,8 @@ for seqType in IMPACT WES; do
       -e '${logDir}/echo.preProcess.${seqType}.${ts}.stderr' \
       ./preProcess_multipleSamples.sh \
       $seqType \
-      $impactPanel"
+      $impactPanel \
+      $aType"
 
     echo $cmd
     echo "submitting Job for $seqType"

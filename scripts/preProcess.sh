@@ -49,8 +49,8 @@ imagePath=$dataDir/$image
 echo $imagePath
 
 
-flagDir=$dataDir/flags
-outPath=$dataDir/output
+flagDir=$dataDir/flags_2
+outPath=$dataDir/output_2
 
 mkdir -p $flagDir 2>/dev/null
 mkdir -p $outPath 2>/dev/null
@@ -87,7 +87,7 @@ if [[ ! -f $flag_done ]]; then
         mafPath=${a2}/combined_mutations/
 
       fi
-      
+
       sampleID_MAF=${bamID}
 
     fi

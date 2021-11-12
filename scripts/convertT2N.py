@@ -1,5 +1,6 @@
 import os
 import sys
+import argparse
 import pandas as pd
 #sampleID="P-0060192-T01-IM7"
 
@@ -29,9 +30,8 @@ def findWESPair(sampleID, mapFile):
     return(BAMID)
 
 
-import argparse
-import os
-import sys
+
+
 
 #sampleID=sys.argv[1]
 

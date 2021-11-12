@@ -18,28 +18,53 @@ shift
 impactPanel=$1
 shift
 
+aType=$1;
+shift
+
+#echo $aType
+
 sampleTrackerFile="Data-2021-11-4.xlsx"
 mapFile_wes="MSKWESRP.pairing.tsv"
+subsetFile="amp-with-exome-468.xlsx"
 
 dataDir=/home/sumans/Projects/Project_BoundlessBio/data
 
 inputDir=${dataDir}/input
-sampleTrackerFilePath=${inputDir}/${sampleTrackerFile}
-mapFile_wes_Path=${inputDir}/${mapFile_wes}
+manifestDir=${inputDir}/manifest
+sampleTrackerFilePath=${manifestDir}/${sampleTrackerFile}
+mapFile_wes_Path=${manifestDir}/${mapFile_wes}
+subsetFilePath=${manifestDir}/${subsetFile}
 
-outputManifest="sampleManifest_${impactPanel}.txt"
-outputManifestPath=${inputDir}/${outputManifest}
+outputManifest="sampleManifest_${impactPanel}_${aType}.txt"
+outputManifestPath=${manifestDir}/${outputManifest}
 
-if [[ ! -f $outputManifest ]]; then
-  python3.8 generateManifest.py $impactPanel $sampleTrackerFilePath $outputManifestPath
+if [[ ! -f $outputManifest ]] && [[ "$aType" == 1 ]]; then
+    cmd="python3.8 generateManifest.py --impactPanel $impactPanel --sampleManifest $sampleTrackerFilePath --outputFile $outputManifestPath --aType $aType"
+    echo $cmd
+    eval $cmd
+
+
+elif [[ ! -f $outputManifest ]] && [[ "$aType" == 2 ]]; then
+    cmd="python3.8 generateManifest.py --impactPanel $impactPanel --sampleManifest $sampleTrackerFilePath --outputFile $outputManifestPath --subsetFile $subsetFilePath --aType $aType"
+    echo $cmd
+    eval $cmd
+
 fi
 
 
 bamMirrorPath_impact="/juno/res/dmpcollab/dmpshare/share/irb12_245"
 bamMirrorPath_wes="/juno/work/tempo/wes_repo/Results/v1.4.x/cohort_level/MSKWESRP"
 
-bedName_impact="IMPACT505_picard_baits-1.interval_list"
-bedNameImage_impact="IMPACT505_picard_baits.bed"
+if [[ "$impactPanel" == "IM7" ]]; then
+  bedName_impact="IMPACT505_picard_baits-1.interval_list"
+  bedNameImage_impact="IMPACT505_picard_baits.bed"
+
+elif [[ "$impactPanel" == "IM6" ]]; then
+  bedName_impact="IMPACT468_picard_baits.interval_list"
+  bedNameImage_impact="IMPACT505_picard_baits.bed"
+
+fi
+
 
 #bedName_wes="xgen-exome-research-panel-v2-targets-hg19.bed"
 #bedNameImage_wes="xgen-exome-research-panel-v2-targets-hg19.bed"
@@ -81,7 +106,7 @@ if [[ "$seqType" == "IMPACT" ]]; then
       echo $cmd
       echo
 
-      eval $cmd
+      #eval $cmd
       echo "Done"
       echo
       echo
@@ -129,7 +154,7 @@ elif [[ "$seqType" == "WES" ]]; then
       echo
       #echo "hello"
 
-      eval ${cmd}
+      #eval ${cmd}
 
 
       echo "Done"
