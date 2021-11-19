@@ -16,7 +16,7 @@ source /home/sumans/miniconda2/bin/activate gddP2
 module load singularity/3.7.1
 
 bamMirrorPath=$1
-echo $bamMirrorPath
+#echo $bamMirrorPath
 shift
 
 sampleID=$1
@@ -46,7 +46,7 @@ dataDir=/home/sumans/Projects/Project_BoundlessBio/data
 image="mskcc_echo_preprocess.sif"
 
 imagePath=$dataDir/$image
-echo $imagePath
+#echo $imagePath
 
 
 flagDir=$dataDir/flags_2
@@ -107,7 +107,6 @@ if [[ ! -f $flag_done ]]; then
         # bedName="IMPACT505_picard_baits-1.interval_list"
         # bedNameImage="IMPACT505_picard_baits.bed"
 
-        outPath=$dataDir/output
         outFile_step1=${sampleID}_${seqType}.cnn
         outFile_step2=${sampleID}_${seqType}_historgram.csv
 

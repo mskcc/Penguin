@@ -61,7 +61,7 @@ if [[ "$impactPanel" == "IM7" ]]; then
 
 elif [[ "$impactPanel" == "IM6" ]]; then
   bedName_impact="IMPACT468_picard_baits.interval_list"
-  bedNameImage_impact="IMPACT505_picard_baits.bed"
+  bedNameImage_impact="IMPACT468_picard_baits.interval_list"
 
 fi
 
@@ -106,7 +106,7 @@ if [[ "$seqType" == "IMPACT" ]]; then
       echo $cmd
       echo
 
-      #eval $cmd
+      eval $cmd
       echo "Done"
       echo
       echo
@@ -154,7 +154,7 @@ elif [[ "$seqType" == "WES" ]]; then
       echo
       #echo "hello"
 
-      #eval ${cmd}
+      eval ${cmd}
 
 
       echo "Done"
