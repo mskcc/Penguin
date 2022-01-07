@@ -16,6 +16,8 @@ parser.add_argument('--outputFile', required=False)
 
 parser.add_argument('--aType', required=True)
 
+parser.add_argument('--sampleIDColumn', required=False)
+
 args = parser.parse_args()
 
 if args.impactPanel is not None:
@@ -24,11 +26,15 @@ if args.impactPanel is not None:
 if args.subsetFile is not None:
     subsetFile=args.subsetFile
 
+if args.sampleIDColumn is not None:
+    sampleIDColumn=int(args.sampleIDColumn)
+
 sampleTrackerFilePath=args.sampleManifest
 outputManifestPath=args.outputFile
 analysisType=int(args.aType)
 #print("Test")
 #print(type(analysisType))
+print(sampleIDColumn)
 
 if analysisType == 1:
 
@@ -42,6 +48,6 @@ elif analysisType == 2:
 
     df = pd.read_excel(sampleTrackerFilePath, engine='openpyxl')
     df_1=pd.read_excel(subsetFile, engine='openpyxl')
-    listOfIDs=df_1.iloc[:,2].unique().tolist()
+    listOfIDs=df_1.iloc[:,sampleIDColumn].unique().tolist()
     df_filtered=df[df.iloc[:,0].isin(listOfIDs)]
     df_filtered.to_csv(outputManifestPath, sep='\t', index=False)

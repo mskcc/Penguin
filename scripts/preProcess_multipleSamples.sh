@@ -25,7 +25,10 @@ shift
 
 sampleTrackerFile="Data-2021-11-4.xlsx"
 mapFile_wes="MSKWESRP.pairing.tsv"
-subsetFile="amp-with-exome-468.xlsx"
+#subsetFile="amp-with-exome-468.xlsx"
+subsetFile="BB_Phase2_39Samples.xlsx"
+# Column number of Sample ID inside manifest file. If the column number is 2, the index will be 1
+sampleIDColumn=1
 
 dataDir=/home/sumans/Projects/Project_BoundlessBio/data
 
@@ -45,7 +48,7 @@ if [[ ! -f $outputManifest ]] && [[ "$aType" == 1 ]]; then
 
 
 elif [[ ! -f $outputManifest ]] && [[ "$aType" == 2 ]]; then
-    cmd="python3.8 generateManifest.py --impactPanel $impactPanel --sampleManifest $sampleTrackerFilePath --outputFile $outputManifestPath --subsetFile $subsetFilePath --aType $aType"
+    cmd="python3.8 generateManifest.py --impactPanel $impactPanel --sampleManifest $sampleTrackerFilePath --outputFile $outputManifestPath --subsetFile $subsetFilePath --aType $aType --sampleIDColumn $sampleIDColumn"
     echo $cmd
     eval $cmd
 
