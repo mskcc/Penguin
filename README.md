@@ -1,7 +1,28 @@
 # ecDNA-Echo
 Pipeline to Analyze ecDNA in collaboration with BoundlessBio
 
+## Version 2
 
+### Building Echo-Preprocessor Image
+
+#### Singularity
+
+```
+export singularity_cache=$HOME/.singularity/cache
+
+echo $singularity_cache
+
+singularity build --docker-login  ${singularity_cache}/boundlessbio-echo-preprocessor-v2.0.4.img docker://boundlessbio/echo-preprocessor:release-v2.0.4
+```
+
+
+### L
+
+
+
+
+
+## Version 1
 
 ### List of Samples
 
@@ -95,11 +116,15 @@ tar -xf google-cloud-sdk-363.0.0-linux-x86_64.tar.gz
 
 ```
 ./google-cloud-sdk/bin/gsutil  ls gs://bbi-mskcc
+./google-cloud-sdk/bin/gsutil cp ./Projects/Project_BoundlessBio/data/output/P-0061521-* gs://bbi-mskcc
 ```
 
 
 
-
+#### Submitting to Cluster
+```
+bsub -W 20:00 -n 8 -R 'rusage[mem=15]' -J 'echo.all' -o 'merge.all.out' -e 'merge.all.err' ./preProcess_multipleSamples.sh
+```
 
 
 
@@ -114,3 +139,10 @@ tar -xf google-cloud-sdk-363.0.0-linux-x86_64.tar.gz
 /juno/res/dmpcollab/dmpshare/share/irb12_245/*/*/*bam
 
 ```
+
+#### Reference Data Files
+
+```
+/juno/work/ci/resources/genomes/GRCh37/fasta/b37.fasta
+```
+
