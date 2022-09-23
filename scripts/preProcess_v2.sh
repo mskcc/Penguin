@@ -106,11 +106,13 @@ if [[ ! -f $flag_done ]]; then
       for sampleType in N T; do
         bamFilePath_${sampleType}=`python3.8 generateBAMFilePath.py $keyFile $bamMirrorPath $sampleID $sampleType`
         echo "${sampleTypeBAM} File Path=${bamFilePath_${sampleType}}"
+      done
+
 
         mafFile="data_mutations_extended.txt"
         mafPath=$dataDir/input/
 
-        sampleID_MAF=${bamID}
+        # sampleID_MAF=${bamID}
 
     elif [[ "$seqType" == "WES" ]]; then
       bamFilePath=${bamMirrorPath}/bams/${bamID}/${bamID}.bam

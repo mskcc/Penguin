@@ -105,7 +105,7 @@ if [[ "$seqType" == "IMPACT" ]]; then
       echo $cmd
       echo
 
-      eval $cmd
+      # eval $cmd
       echo "Done"
       echo
       echo
