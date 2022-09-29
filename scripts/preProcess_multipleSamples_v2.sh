@@ -26,7 +26,8 @@ shift
 sampleTrackerFile="Data-2021-11-4.xlsx"
 mapFile_wes="MSKWESRP.pairing.tsv"
 #subsetFile="amp-with-exome-468.xlsx"
-subsetFile="BB_Phase2_39Samples.xlsx"
+# subsetFile="BB_Phase2_39Samples.xlsx"
+subsetFile="BB_Phase2_37Samples.xlsx"
 # Column number of Sample ID inside manifest file. If the column number is 2, the index will be 1
 sampleIDColumn=1
 
@@ -92,7 +93,7 @@ if [[ "$seqType" == "IMPACT" ]]; then
       bamID_Normal=${sampleID_Normal}
 
       echo "Sample=$sampleID_Tumor"
-      cmd="sh preProcess.sh \
+      cmd="sh preProcess_v2.sh \
             $bamMirrorPath_impact \
             $sampleID_Tumor \
             $sampleID_Normal \
@@ -105,7 +106,7 @@ if [[ "$seqType" == "IMPACT" ]]; then
       echo $cmd
       echo
 
-      # eval $cmd
+      eval $cmd
       echo "Done"
       echo
       echo
@@ -139,7 +140,7 @@ elif [[ "$seqType" == "WES" ]]; then
       fi
 
       echo "Sample=$sampleID"
-      cmd="sh ./preProcess.sh \
+      cmd="sh preProcess_v2.sh \
             $bamMirrorPath_wes \
             $sampleID \
             $bedName_wes \

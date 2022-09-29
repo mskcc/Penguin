@@ -16,7 +16,7 @@ source /home/sumans/miniconda2/bin/activate gddP2
 module load singularity/3.7.1
 
 bamMirrorPath=$1
-#echo $bamMirrorPath
+echo $bamMirrorPath
 shift
 
 sampleID_Tumor=$1
@@ -46,9 +46,12 @@ keyFile="/juno/res/dmpcollab/dmprequest/12-245/key.txt"
 
 dataDir=/home/sumans/Projects/Project_BoundlessBio/data
 
-image="mskcc_echo_preprocess.sif"
+singularity_cache=$HOME/.singularity/cache
 
-imagePath=$dataDir/$image
+# image="echo-preprocessor:release-v2.0.4"
+image="boundlessbio-echo-preprocessor-v2.0.4.img"
+
+imagePath=$singularity_cache/$image
 #echo $imagePath
 
 TOP_LEVEL_DIR=${dataDir}
@@ -61,39 +64,45 @@ EXCLUDE_FILE=${TOP_LEVEL_DIR}/input/references/human.hg19.excl.tsv
 
 
 TUMOR_SAMPLE_ID=${sampleID_Tumor}
+echo $TUMOR_SAMPLE_ID
 NORMAL_SAMPLE_ID=${sampleID_Normal}
-TUMOR_BAM=${TOP_LEVEL_DIR}</path/to/tumor.bam>
-NORMAL_BAM=${TOP_LEVEL_DIR}</path/to/normal_sample.bam>
+echo $NORMAL_SAMPLE_ID
+# TUMOR_BAM=${TOP_LEVEL_DIR}</path/to/tumor.bam>
+# NORMAL_BAM=${TOP_LEVEL_DIR}</path/to/normal_sample.bam>
 
 TUMOR_PURITY=0.5
 GENOME_VERSION=hg19
 # If somatic small variants are available in maf format
-MAF_FILE=${TOP_LEVEL_DIR}</path/to/somatic_SNV_indel.maf>
+# MAF_FILE=${TOP_LEVEL_DIR}</path/to/somatic_SNV_indel.maf>
 # If using a pregenerated reference from echo preprocessor
-REFERENCE_CNN=${TOP_LEVEL_DIR}</path/to/reference.cnn>
+# REFERENCE_CNN=${TOP_LEVEL_DIR}</path/to/reference.cnn>
 # If using a matched normal
 
 
-#keyFile="/Users/sumans/Projects/Project_BoundlessBio/data/input/key.txt"
-keyFile="/juno/res/dmpcollab/dmprequest/12-245/key.txt"
+keyFile="/home/sumans/Projects/Project_BoundlessBio/data/input/manifest/key.txt"
+# keyFile="/juno/res/dmpcollab/dmprequest/12-245/key.txt"
+echo $keyFile
 
 dataDir=/home/sumans/Projects/Project_BoundlessBio/data
 
-image="mskcc_echo_preprocess.sif"
-
-imagePath=$dataDir/$image
+# image="mskcc_echo_preprocess.sif"
+#
+# imagePath=$dataDir/$image
 #echo $imagePath
 
 
-flagDir=$dataDir/flags_2
-outPath=$dataDir/output_2
+flagDir=$dataDir/flags_3
+outDir_flatReference=$OUT_DIR/flatReference
+outDir_Sample=$OUT_DIR/${TUMOR_SAMPLE_ID}
 
 mkdir -p $flagDir 2>/dev/null
-mkdir -p $outPath 2>/dev/null
+mkdir -p $outDir_flatReference 2>/dev/null
+mkdir -p $outDir_Sample 2>/dev/null
+# mkdir -p $OUT_DIR 2>/dev/null
 
-flag_inProcess=$flagDir/${sampleID}_${seqType}.running
-flag_done=$flagDir/${sampleID}_${seqType}.done
-flag_fail=$flagDir/${sampleID}_${seqType}.fail
+flag_inProcess=$flagDir/${TUMOR_SAMPLE_ID}_${seqType}.running
+flag_done=$flagDir/${TUMOR_SAMPLE_ID}_${seqType}.done
+flag_fail=$flagDir/${TUMOR_SAMPLE_ID}_${seqType}.fail
 
 # python generateBAMFilePath.py $keyFile $bamMirrorPath $sampleID
 
@@ -103,10 +112,16 @@ if [[ ! -f $flag_done ]]; then
 
     if [[ "$seqType" == "IMPACT" ]]; then
 
-      for sampleType in N T; do
-        bamFilePath_${sampleType}=`python3.8 generateBAMFilePath.py $keyFile $bamMirrorPath $sampleID $sampleType`
-        echo "${sampleTypeBAM} File Path=${bamFilePath_${sampleType}}"
-      done
+      # for sampleType in N T; do
+      #   eval bamFilePath_${sampleType}=`python3.8 generateBAMFilePath.py $keyFile $bamMirrorPath $sampleID $sampleType`
+      #   echo "${sampleTypeBAM} File Path=${bamFilePath_${sampleType}}"
+      # done
+
+
+        bamFilePath_T=`python3.8 generateBAMFilePath.py $keyFile $bamMirrorPath $TUMOR_SAMPLE_ID T`
+        bamFilePath_N=`python3.8 generateBAMFilePath.py $keyFile $bamMirrorPath $NORMAL_SAMPLE_ID N`
+        echo "T BAM File Path=${bamFilePath_T}"
+        echo "N BAM File Path=${bamFilePath_N}"
 
 
         mafFile="data_mutations_extended.txt"
@@ -114,41 +129,48 @@ if [[ ! -f $flag_done ]]; then
 
         # sampleID_MAF=${bamID}
 
-    elif [[ "$seqType" == "WES" ]]; then
-      bamFilePath=${bamMirrorPath}/bams/${bamID}/${bamID}.bam
-      echo "BAM File Path=$bamFilePath"
-
-      if [[ "$sampleType" == "T" ]]; then
-
-        a1=${bamMirrorPath}/somatic
-        a2=$(find ${a1} -maxdepth 1  -name ${bamID}* -print)
-        a3=$(basename ${a2})
-        mafFile=${a3}.somatic.final.maf
-        mafPath=${a2}/combined_mutations/
-
-      fi
-
-      sampleID_MAF=${bamID}
+    # elif [[ "$seqType" == "WES" ]]; then
+    #   bamFilePath=${bamMirrorPath}/bams/${bamID}/${bamID}.bam
+    #   echo "BAM File Path=$bamFilePath"
+    #
+    #   if [[ "$sampleType" == "T" ]]; then
+    #
+    #     a1=${bamMirrorPath}/somatic
+    #     a2=$(find ${a1} -maxdepth 1  -name ${bamID}* -print)
+    #     a3=$(basename ${a2})
+    #     mafFile=${a3}.somatic.final.maf
+    #     mafPath=${a2}/combined_mutations/
+    #
+    #   fi
+    #
+    #   sampleID_MAF=${bamID}
 
     fi
 
 
-    if [[ -f $bamFilePath ]]; then
+    if [[ -f ${bamFilePath_T} ]] && [[ -f ${bamFilePath_N} ]]; then
 
         touch $flag_inProcess
 
-        echo "BAM File Path exists....."
+        echo "BAM File Paths exists for both T & N....."
         echo
 
-        bamDir=$(dirname $bamFilePath)
-        bamName=$(basename $bamFilePath)
+        bamDir_T=$(dirname $bamFilePath_T)
+        bamName_T=$(basename $bamFilePath_T)
+
+
+
+        bamDir_N=$(dirname $bamFilePath_N)
+        bamName_N=$(basename $bamFilePath_N)
 
         bedPath=$dataDir/input/beds
         # bedName="IMPACT505_picard_baits-1.interval_list"
         # bedNameImage="IMPACT505_picard_baits.bed"
 
-        outFile_step1=${sampleID}_${seqType}.cnn
-        outFile_step2=${sampleID}_${seqType}_historgram.csv
+        bedPrefix=`echo $bedName | cut -d"." -f1`
+        outFile_flatRef_1=${outDir_flatReference}/${bedPrefix}.antitarget.bed
+        outFile_flatRef_2=${outDir_flatReference}/${bedPrefix}.flat.reference.cnn
+        outFile_flatRef_3=${outDir_flatReference}/${bedPrefix}.target.bed
 
 
 
@@ -163,16 +185,16 @@ if [[ ! -f $flag_done ]]; then
         #   --bed_file ${bedNameImage} \
         #   --step process_cnvkit"
 
-
+      if [[ ! -f ${outFile_flatRef_1} ]] || [[ ! -f ${outFile_flatRef_2} ]] || [[ ! -f ${outFile_flatRef_3} ]]; then
 
       cmd="singularity run \
         --bind ${TOP_LEVEL_DIR}:${TOP_LEVEL_DIR} \
-        ${singularity_cache}/boundlessbio-echo-preprocessor-v2.0.4.img \
-        --out_dir ${OUT_DIR} \
+        $imagePath \
+        --out_dir ${outDir_flatReference} \
         --ref_fasta ${REF_FILE} \
         --target_bed ${BED_FILE} \
         --annot_file ${ANNOTATION_FILE} \
-        reference
+        reference"
 
         echo "Pre-Process Step 1....."
         echo $cmd
@@ -180,7 +202,10 @@ if [[ ! -f $flag_done ]]; then
 
         eval $cmd
 
-        if [[ "$sampleType" == "T" ]]; then
+      fi
+
+
+        # if [[ "$sampleType" == "T" ]]; then
 
             # cmd="singularity run \
             #   --bind ${mafPath}:/home/input/ \
@@ -191,33 +216,33 @@ if [[ ! -f $flag_done ]]; then
             #   --output_file /home/output/${outFile_step2} \
             #   --step process_vcf"
 
-              cmd="singularity run \
-                --bind ${TOP_LEVEL_DIR}:${TOP_LEVEL_DIR} \
-                ${imagePath} \
-                --out_dir ${outPath} \
-                --ref_fasta ${REF_FILE} \
-                --ref_genome ${GENOME_VERSION} \
-                --target_bed ${BED_FILE} \
-                --annot_file ${ANNOTATION_FILE} \
-                --exclude ${EXCLUDE_FILE} \
-                --tumor_bam ${bamName} \
-                --tumor_sample_id ${sampleID_MAF} \
-                --normal_sample_id ${NORMAL_SAMPLE_ID} \
-                --purity ${TUMOR_PURITY} \
-                --normal_bam ${NORMAL_BAM} \
-                --maf_file ${mafFile} \
-                preprocess"
+        cmd="singularity run \
+          --bind ${TOP_LEVEL_DIR}:${TOP_LEVEL_DIR},${bamDir_T}:${bamDir_T},${bamDir_N}:${bamDir_N} \
+          ${imagePath} \
+          --out_dir ${outDir_Sample} \
+          --ref_fasta ${REF_FILE} \
+          --ref_genome ${GENOME_VERSION} \
+          --target_bed ${BED_FILE} \
+          --annot_file ${ANNOTATION_FILE} \
+          --exclude ${EXCLUDE_FILE} \
+          --tumor_bam ${bamFilePath_T} \
+          --normal_bam ${bamFilePath_N} \
+          --tumor_sample_id ${TUMOR_SAMPLE_ID} \
+          --normal_sample_id ${NORMAL_SAMPLE_ID} \
+          --purity ${TUMOR_PURITY} \
+          --maf_file ${mafPath}/${mafFile} \
+          preprocess"
 
 
 
 
-            echo "Pre-Process Step 2....."
-            echo $cmd
+          echo "Pre-Process Step 2....."
+          echo $cmd
 
-            echo
+          echo
 
-            eval $cmd
-        fi
+          eval $cmd
+        # fi
 
         if [ $? -eq 0 ]; then
 
