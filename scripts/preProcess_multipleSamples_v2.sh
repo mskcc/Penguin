@@ -27,11 +27,13 @@ sampleTrackerFile="Data-2021-11-4.xlsx"
 mapFile_wes="MSKWESRP.pairing.tsv"
 #subsetFile="amp-with-exome-468.xlsx"
 # subsetFile="BB_Phase2_39Samples.xlsx"
-subsetFile="BB_Phase2_37Samples.xlsx"
+# subsetFile="BB_Phase2_37Samples.xlsx"
+subsetFile="BB_Phase2_36Samples.xlsx"
+
 # Column number of Sample ID inside manifest file. If the column number is 2, the index will be 1
 sampleIDColumn=1
 
-dataDir=/home/sumans/Projects/Project_BoundlessBio/data
+dataDir=/home/sumans/bergerm1/bergerlab/sumans/Project_BoundlessBio/data
 
 inputDir=${dataDir}/input
 manifestDir=${inputDir}/manifest
@@ -79,17 +81,27 @@ count=0;
 
 if [[ "$seqType" == "IMPACT" ]]; then
 
- for i in $(cat $outputManifestPath| tail -n +2 | awk '{print $1}'); do
+ for i in $(cat $outputManifestPath| tail -n +2 | awk -F "\t" '{print $1"_"$25}'); do
 
 
 
    # For Tumor Sample
           # sampleTypeTumor=$j
-      sampleID_Tumor=$i
+      sampleID_Tumor=$(echo $i | awk -F'_' '{print $1}')
+      tp=$(echo $i | awk -F'_' '{print $2}')
+      echo $tp
+      # tp_fraction=$(( tp / 100.00 ))
+      # echo $tp_fraction
+      # tumor_Purity=$(printf "%.2f \n" $tp_fraction)
+      tumor_Purity=$(echo "scale=1 ; $tp / 100"| bc)
+
+      echo $tumor_Purity
+
+
       bamID_Tumor=${sampleID_Tumor}
 
    # For Normal Paired Sample
-      sampleID_Normal=`python convertT2N.py --sID $i --aType impact_N`
+      sampleID_Normal=`python convertT2N.py --sID $sampleID_Tumor --aType impact_N`
       bamID_Normal=${sampleID_Normal}
 
       echo "Sample=$sampleID_Tumor"
@@ -101,7 +113,8 @@ if [[ "$seqType" == "IMPACT" ]]; then
             $bedNameImage_impact \
             $seqType \
             $bamID_Tumor \
-            $bamID_Normal"
+            $bamID_Normal \
+            $tumor_Purity"
 
       echo $cmd
       echo

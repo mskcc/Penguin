@@ -1,7 +1,7 @@
 #!/bin/bash
 
-dataDir=/home/sumans/Projects/Project_BoundlessBio/data
-logDir=${dataDir}/log
+dataDir=/home/sumans/bergerm1/bergerlab/sumans/Project_BoundlessBio/data
+logDir=${dataDir}/log_v2
 
 mkdir -p $logDir 2>/dev/null
 
@@ -12,16 +12,17 @@ ts=$(date +%Y%m%d%H%M%S)
 impactPanel="IM6"
 aType=2
 
-for seqType in IMPACT WES; do
+# for seqType in IMPACT WES; do
+for seqType in IMPACT; do
 
   cmd="bsub \
-      -W 20:00 \
+      -W 72:00 \
       -n 4 \
-      -R 'rusage[mem=15]' \
+      -R 'rusage[mem=64]' \
       -J 'echo.preProcess.${seqType}' \
       -o '${logDir}/echo.preProcess.${seqType}.${ts}.stdout' \
       -e '${logDir}/echo.preProcess.${seqType}.${ts}.stderr' \
-      ./preProcess_multipleSamples.sh \
+      ./preProcess_multipleSamples_v2.sh \
       $seqType \
       $impactPanel \
       $aType"

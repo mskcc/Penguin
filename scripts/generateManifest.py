@@ -50,4 +50,6 @@ elif analysisType == 2:
     df_1=pd.read_excel(subsetFile, engine='openpyxl')
     listOfIDs=df_1.iloc[:,sampleIDColumn].unique().tolist()
     df_filtered=df[df.iloc[:,0].isin(listOfIDs)]
-    df_filtered.to_csv(outputManifestPath, sep='\t', index=False)
+    df_filtered_merged=pd.merge(df_filtered, df_1, left_on="DMP Sample ID", right_on="Sample ID")
+    # df_filtered.to_csv(outputManifestPath, sep='\t', index=False)
+    df_filtered_merged.to_csv(outputManifestPath, sep='\t', index=False)

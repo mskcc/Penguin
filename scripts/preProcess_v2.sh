@@ -42,9 +42,12 @@ shift
 bamID_Normal=$1
 shift
 
+tumor_Purity=$1
+shift
+
 keyFile="/juno/res/dmpcollab/dmprequest/12-245/key.txt"
 
-dataDir=/home/sumans/Projects/Project_BoundlessBio/data
+dataDir=/home/sumans/bergerm1/bergerlab/sumans/Project_BoundlessBio/data
 
 singularity_cache=$HOME/.singularity/cache
 
@@ -70,7 +73,8 @@ echo $NORMAL_SAMPLE_ID
 # TUMOR_BAM=${TOP_LEVEL_DIR}</path/to/tumor.bam>
 # NORMAL_BAM=${TOP_LEVEL_DIR}</path/to/normal_sample.bam>
 
-TUMOR_PURITY=0.5
+TUMOR_PURITY=${tumor_Purity}
+echo $TUMOR_PURITY
 GENOME_VERSION=hg19
 # If somatic small variants are available in maf format
 # MAF_FILE=${TOP_LEVEL_DIR}</path/to/somatic_SNV_indel.maf>
