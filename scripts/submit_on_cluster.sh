@@ -1,7 +1,7 @@
 #!/bin/bash
 
-dataDir=/home/sumans/bergerm1/bergerlab/sumans/Project_BoundlessBio/data
-logDir=${dataDir}/log_v2
+dataDir=/juno/work/bergerm1/bergerlab/sumans/Project_BoundlessBio/data
+logDir=${dataDir}/log_v3
 
 mkdir -p $logDir 2>/dev/null
 
@@ -10,7 +10,7 @@ ts=$(date +%Y%m%d%H%M%S)
 #seqType="IMPACT"
 #impactPanel="IM7"
 impactPanel="IM6"
-aType=2
+aType=1
 
 # for seqType in IMPACT WES; do
 for seqType in IMPACT; do

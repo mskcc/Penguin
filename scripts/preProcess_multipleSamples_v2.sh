@@ -23,20 +23,21 @@ shift
 
 #echo $aType
 
-sampleTrackerFile="Data-2021-11-4.xlsx"
+# sampleTrackerFile="Data-2021-11-4.xlsx"
+sampleTrackerFile="MET-bbi-cases.xlsx"
 mapFile_wes="MSKWESRP.pairing.tsv"
 #subsetFile="amp-with-exome-468.xlsx"
-# subsetFile="BB_Phase2_39Samples.xlsx"
-# subsetFile="BB_Phase2_37Samples.xlsx"
-subsetFile="BB_Phase2_36Samples.xlsx"
+subsetFile="ListofIDs_19N.xlsx"
+
 
 # Column number of Sample ID inside manifest file. If the column number is 2, the index will be 1
-sampleIDColumn=1
+sampleIDColumn=0
+tumorPurityColumn=8
 
-dataDir=/home/sumans/bergerm1/bergerlab/sumans/Project_BoundlessBio/data
+dataDir=/juno/work/bergerm1/bergerlab/sumans/Project_BoundlessBio/data
 
 inputDir=${dataDir}/input
-manifestDir=${inputDir}/manifest
+manifestDir=${inputDir}/manifest/BB_MET_Nov2022
 sampleTrackerFilePath=${manifestDir}/${sampleTrackerFile}
 mapFile_wes_Path=${manifestDir}/${mapFile_wes}
 subsetFilePath=${manifestDir}/${subsetFile}
@@ -45,7 +46,9 @@ outputManifest="sampleManifest_${impactPanel}_${aType}.txt"
 outputManifestPath=${manifestDir}/${outputManifest}
 
 if [[ ! -f $outputManifest ]] && [[ "$aType" == 1 ]]; then
-    cmd="python3.8 generateManifest.py --impactPanel $impactPanel --sampleManifest $sampleTrackerFilePath --outputFile $outputManifestPath --aType $aType"
+    # cmd="python3.8 generateManifest.py --impactPanel $impactPanel --sampleManifest $sampleTrackerFilePath --outputFile $outputManifestPath --aType $aType"
+
+    cmd="python3.8 generateManifest.py --impactPanel $impactPanel --sampleManifest $sampleTrackerFilePath --outputFile $outputManifestPath --subsetFile $subsetFilePath --aType $aType --sampleIDColumn $sampleIDColumn"
     echo $cmd
     eval $cmd
 
@@ -81,7 +84,9 @@ count=0;
 
 if [[ "$seqType" == "IMPACT" ]]; then
 
- for i in $(cat $outputManifestPath| tail -n +2 | awk -F "\t" '{print $1"_"$25}'); do
+#  for i in $(cat $outputManifestPath| tail -n +2 | awk -F "\t" '{print $1"_"$25}'); do
+
+ for i in $(cat $outputManifestPath| tail -n +2 | awk -F "\t" -v sampleIDColumn=`expr $sampleIDColumn + 1` -v tumorPurityColumn=`expr $tumorPurityColumn + 1` '{print $sampleIDColumn"_"$tumorPurityColumn}'); do
 
 
 
