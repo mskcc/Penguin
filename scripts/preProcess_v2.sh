@@ -45,9 +45,9 @@ shift
 tumor_Purity=$1
 shift
 
-keyFile="/juno/res/dmpcollab/dmprequest/12-245/key.txt"
+keyFile="/juno/work/bergerm1/bergerlab/sumans/Project_BoundlessBio/data/input/manifest/key.txt"
 
-dataDir=/home/sumans/bergerm1/bergerlab/sumans/Project_BoundlessBio/data
+dataDir=/juno/work/bergerm1/bergerlab/sumans/Project_BoundlessBio/data
 
 singularity_cache=$HOME/.singularity/cache
 
@@ -83,11 +83,11 @@ GENOME_VERSION=hg19
 # If using a matched normal
 
 
-keyFile="/home/sumans/Projects/Project_BoundlessBio/data/input/manifest/key.txt"
-# keyFile="/juno/res/dmpcollab/dmprequest/12-245/key.txt"
-echo $keyFile
+# keyFile="/home/sumans/Projects/Project_BoundlessBio/data/input/manifest/key.txt"
+# # keyFile="/juno/res/dmpcollab/dmprequest/12-245/key.txt"
+# echo $keyFile
 
-dataDir=/home/sumans/Projects/Project_BoundlessBio/data
+# dataDir=/home/sumans/Projects/Project_BoundlessBio/data
 
 # image="mskcc_echo_preprocess.sif"
 #
@@ -112,7 +112,7 @@ flag_fail=$flagDir/${TUMOR_SAMPLE_ID}_${seqType}.fail
 
 if [[ ! -f $flag_done ]]; then
 
-    rm -rf $flag_inProcess && rm -rf $flag_fail
+    rm -rf $flag_inProcess && rm -rf $flag_fail && rm -rf $outDir_Sample
 
     if [[ "$seqType" == "IMPACT" ]]; then
 
@@ -129,7 +129,7 @@ if [[ ! -f $flag_done ]]; then
 
 
         mafFile="data_mutations_extended.txt"
-        mafPath=$dataDir/input/
+        mafPath=$dataDir/input
 
         # sampleID_MAF=${bamID}
 

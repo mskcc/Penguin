@@ -34,7 +34,7 @@ outputManifestPath=args.outputFile
 analysisType=int(args.aType)
 #print("Test")
 #print(type(analysisType))
-print(sampleIDColumn)
+# print(sampleIDColumn)
 
 if analysisType == 1:
 
