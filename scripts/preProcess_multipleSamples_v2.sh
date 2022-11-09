@@ -45,12 +45,12 @@ if [[ "$seqType" == "IMPACT" ]]; then
         bedNameImage_impact="IMPACT468_picard_baits.interval_list"
 
       elif [[ "$impactPanel" == "IM5" ]]; then
-        bedName_impact="cv5_picard_baits.interval_list"
-        bedNameImage_impact="cv5_picard_baits.interval_list"
+        bedName_impact="cv5_picard_baits_withoutHeaders.interval_list"
+        bedNameImage_impact="cv5_picard_baits_withoutHeaders.interval_list"
 
       elif [[ "$impactPanel" == "IM3" ]]; then
-        bedName_impact="cv3_hg19_picard_baits.interval_list"
-        bedNameImage_impact="cv3_hg19_picard_baits.interval_list"
+        bedName_impact="cv3_hg19_picard_baits_withoutHeaders.interval_list"
+        bedNameImage_impact="cv3_hg19_picard_baits_withoutHeaders.interval_list"
 
       fi
 

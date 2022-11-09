@@ -33,6 +33,20 @@ rm -rf flags_3
 
 ```
 
+### Housekeeping Commands
+
+```
+for i in $(ls echo.preProcess.P-0*stdout); do echo $i; cat $i | tail -n 50 | head -n 6; done
+
+bjobs
+bjobs -l 39777158
+
+#For removing headers inside the BED file
+cat cv3_hg19_picard_baits.interval_list | awk '{if ($1 !~ /^@/) {print $0}}' > cv3_hg19_picard_baits_withoutHeaders.interval_list
+
+
+
+```
 
 
 ## Version 1

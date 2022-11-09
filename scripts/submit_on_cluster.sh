@@ -18,7 +18,7 @@ aType=1
 sampleTrackerFile="MET-bbi-cases.xlsx"
 mapFile_wes="MSKWESRP.pairing.tsv"
 #subsetFile="amp-with-exome-468.xlsx"
-subsetFile="ListofIDs_19N.xlsx"
+subsetFile="ListofIDs_9N.xlsx"
 
 # Column number of Sample ID inside manifest file. If the column number is 2, the index will be 1
 sampleIDColumn=0
