@@ -96,12 +96,12 @@ GENOME_VERSION=hg19
 
 
 flagDir=$dataDir/flags_3
-outDir_flatReference=$OUT_DIR/flatReference
-outDir_Sample=$OUT_DIR/${TUMOR_SAMPLE_ID}
+outDir_Sample=${OUT_DIR}/${TUMOR_SAMPLE_ID}
+outDir_flatReference=${outDir_Sample}/flatReference
 
 mkdir -p $flagDir 2>/dev/null
-mkdir -p $outDir_flatReference 2>/dev/null
 mkdir -p $outDir_Sample 2>/dev/null
+mkdir -p $outDir_flatReference 2>/dev/null
 # mkdir -p $OUT_DIR 2>/dev/null
 
 flag_inProcess=$flagDir/${TUMOR_SAMPLE_ID}_${seqType}.running

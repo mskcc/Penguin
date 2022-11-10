@@ -40,6 +40,7 @@ for i in $(ls echo.preProcess.P-0*stdout); do echo $i; cat $i | tail -n 50 | hea
 
 bjobs
 bjobs -l 39777158
+bkill -r $jobID
 
 #For removing headers inside the BED file
 cat cv3_hg19_picard_baits.interval_list | awk '{if ($1 !~ /^@/) {print $0}}' > cv3_hg19_picard_baits_withoutHeaders.interval_list
