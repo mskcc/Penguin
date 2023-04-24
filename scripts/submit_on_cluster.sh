@@ -15,10 +15,10 @@ ts=$(date +%Y%m%d%H%M%S)
 aType=1
 
 # sampleTrackerFile="Data-2021-11-4.xlsx"
-sampleTrackerFile="MET-bbi-cases.xlsx"
+sampleTrackerFile="allFISHSamples.xlsx"
 mapFile_wes="MSKWESRP.pairing.tsv"
 #subsetFile="amp-with-exome-468.xlsx"
-subsetFile="ListofIDs_9N.xlsx"
+subsetFile="ListofIDs_8N.xlsx"
 
 # Column number of Sample ID inside manifest file. If the column number is 2, the index will be 1
 sampleIDColumn=0
@@ -72,7 +72,7 @@ for seqType in IMPACT; do
 
         echo "Sample=$sampleID_Tumor"
         echo $cmd
-        echo "submitting Job for $seqType"
+        echo "submitting Job for Sample=$sampleID_Tumor"
         echo
         eval $cmd
 

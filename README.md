@@ -45,6 +45,9 @@ bkill -r $jobID
 #For removing headers inside the BED file
 cat cv3_hg19_picard_baits.interval_list | awk '{if ($1 !~ /^@/) {print $0}}' > cv3_hg19_picard_baits_withoutHeaders.interval_list
 
+#Killing all the running jobs on LSF
+bjobs | awk '{print $1}' | tail -n +2 | xargs -I {} bkill {}
+
 
 
 ```

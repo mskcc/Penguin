@@ -45,7 +45,8 @@ shift
 tumor_Purity=$1
 shift
 
-keyFile="/juno/work/bergerm1/bergerlab/sumans/Project_BoundlessBio/data/input/manifest/key.txt"
+# keyFile="/juno/work/bergerm1/bergerlab/sumans/Project_BoundlessBio/data/input/manifest/key.txt"
+keyFile="/juno/res/dmpcollab/dmprequest/12-245/key.txt"
 
 dataDir=/juno/work/bergerm1/bergerlab/sumans/Project_BoundlessBio/data
 
