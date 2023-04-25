@@ -54,7 +54,7 @@ imagePath_echoPreProcessor=$singularity_cache/$image_echoPreProcessor
 imagePath_echoCaller=$singularity_cache/$image_echoCaller
 
 TOP_LEVEL_DIR=${dataDir}
-OUT_DIR=${TOP_LEVEL_DIR}/output_4
+OUT_DIR=${TOP_LEVEL_DIR}/output_5
 REF_FILE=${TOP_LEVEL_DIR}/input/references/b37.fasta
 BED_FILE=${TOP_LEVEL_DIR}/input/beds/${bedName}
 ANNOTATION_FILE=${TOP_LEVEL_DIR}/input/references/refFlat_withoutPrefix.txt
@@ -88,18 +88,18 @@ GENOME_VERSION=hg19
 # imagePath=$dataDir/$image
 #echo $imagePath
 
-flagDir=$dataDir/flags_3
+flagDir=$dataDir/flags_5
 outDir_Sample=${OUT_DIR}/${TUMOR_SAMPLE_ID}
 outDir_flatReference=${outDir_Sample}/flatReference
 outDir_preProcessor=${outDir_Sample}/preProcessor
 outDir_echoCaller=${outDir_Sample}/echoCaller
+echo "$outDir_echoCaller"
 
-mkdir -p $flagDir 2>/dev/null
-mkdir -p "$outDir_Sample" 2>/dev/null
-mkdir -p "$outDir_flatReference" 2>/dev/null
-mkdir -p "$outDir_preProcessor" 2>/dev/null
-mkdir -p "$outDir_echoCaller" 2>/dev/null
-# mkdir -p $OUT_DIR 2>/dev/null
+mkdir -p "$flagDir" 2>/dev/null
+# mkdir -p "$outDir_Sample" 2>/dev/null
+
+
+# exit
 
 flag_inProcess=$flagDir/${TUMOR_SAMPLE_ID}_${seqType}.running
 flag_done=$flagDir/${TUMOR_SAMPLE_ID}_${seqType}.done
@@ -109,7 +109,14 @@ flag_fail=$flagDir/${TUMOR_SAMPLE_ID}_${seqType}.fail
 
 if [[ ! -f $flag_done ]]; then
 
-    rm -rf "$flag_inProcess" && rm -rf "$flag_fail" && rm -rf "$outDir_Sample"
+    rm -rf "$flag_inProcess" && \
+    rm -rf "$flag_fail" && \
+    rm -rf "$outDir_Sample" && \
+    mkdir -p "$outDir_flatReference" 2>/dev/null && \
+    mkdir -p "$outDir_preProcessor" 2>/dev/null && \
+    mkdir -p "$outDir_echoCaller" 2>/dev/null
+
+    
 
     if [[ "$seqType" == "IMPACT" ]]; then
 
@@ -160,6 +167,8 @@ if [[ ! -f $flag_done ]]; then
         echo "$cmd"
         echo
 
+
+
         # eval "$cmd"
 
         if ! eval "$cmd" ; then
@@ -168,6 +177,7 @@ if [[ ! -f $flag_done ]]; then
 
 
       fi
+
 
       cmd="singularity run \
         --bind ${TOP_LEVEL_DIR}:${TOP_LEVEL_DIR},${bamDir_T}:${bamDir_T},${bamDir_N}:${bamDir_N} \
@@ -199,10 +209,10 @@ if [[ ! -f $flag_done ]]; then
       cmd="singularity run \
       --bind ${outDir_preProcessor}:${outDir_preProcessor},${outDir_echoCaller}:${outDir_echoCaller} \
       ${imagePath_echoCaller} \
+      call \
       --input_folder ${outDir_preProcessor} \
       --output_folder ${outDir_echoCaller} \
-      --ref_genome ${GENOME_VERSION} \
-      call"
+      --ref_genome ${GENOME_VERSION}"
 
       echo "Running Echo Caller: Step 3....."
       echo "$cmd"

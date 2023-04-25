@@ -3,7 +3,7 @@
 dataDir=/juno/work/bergerm1/bergerlab/sumans/Project_BoundlessBio/data
 inputDir=${dataDir}/input
 manifestDir=${inputDir}/manifest/BB_MET_Nov2022
-logDir=${dataDir}/log_v4
+logDir=${dataDir}/log_v5
 
 mkdir -p $logDir 2>/dev/null
 
@@ -74,7 +74,7 @@ for seqType in IMPACT; do
         echo "$cmd"
         echo "submitting Job for Sample=$sampleID_Tumor"
         echo
-       #eval "$cmd"
+        eval "$cmd"
 
         count=$((count+1))
       
