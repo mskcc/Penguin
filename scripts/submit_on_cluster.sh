@@ -3,7 +3,7 @@
 dataDir=/juno/work/bergerm1/bergerlab/sumans/Project_BoundlessBio/data
 inputDir=${dataDir}/input
 manifestDir=${inputDir}/manifest/BB_MET_Nov2022
-logDir=${dataDir}/log_v3
+logDir=${dataDir}/log_v4
 
 mkdir -p $logDir 2>/dev/null
 
@@ -36,15 +36,15 @@ if [[ ! -f $outputManifest ]] && [[ "$aType" == 1 ]]; then
     # cmd="python3.8 generateManifest.py --impactPanel $impactPanel --sampleManifest $sampleTrackerFilePath --outputFile $outputManifestPath --aType $aType"
 
     cmd="python3.8 generateManifest.py --sampleManifest $sampleTrackerFilePath --outputFile $outputManifestPath --subsetFile $subsetFilePath --aType $aType --sampleIDColumn $sampleIDColumn"
-    echo $cmd
-    eval $cmd
+    echo "$cmd"
+    eval "$cmd"
     echo
 
 
 elif [[ ! -f $outputManifest ]] && [[ "$aType" == 2 ]]; then
     cmd="python3.8 generateManifest.py --impactPanel $impactPanel --sampleManifest $sampleTrackerFilePath --outputFile $outputManifestPath --subsetFile $subsetFilePath --aType $aType --sampleIDColumn $sampleIDColumn"
-    echo $cmd
-    eval $cmd
+    echo "$cmd"
+    eval "$cmd"
 
 fi
 
@@ -55,9 +55,9 @@ for seqType in IMPACT; do
 
   if [[ "$seqType" == "IMPACT" ]]; then
 
-    for i in $(cat $outputManifestPath| tail -n +2 | awk -F "\t" -v sampleIDColumn=`expr $sampleIDColumn + 1` -v tumorPurityColumn=`expr $tumorPurityColumn + 1` '{print $sampleIDColumn"_"$tumorPurityColumn}'); do
+    for i in $(cat "$outputManifestPath"| tail -n +2 | awk -F "\t" -v sampleIDColumn=$(expr $sampleIDColumn + 1) -v tumorPurityColumn=$(expr $tumorPurityColumn + 1) '{print $sampleIDColumn"_"$tumorPurityColumn}'); do
 
-      sampleID_Tumor=$(echo $i | awk -F'_' '{print $1}')
+      sampleID_Tumor=$(echo "$i" | awk -F'_' '{print $1}')
 
       cmd="bsub \
           -W 72:00 \
@@ -71,10 +71,10 @@ for seqType in IMPACT; do
           $i"
 
         echo "Sample=$sampleID_Tumor"
-        echo $cmd
+        echo "$cmd"
         echo "submitting Job for Sample=$sampleID_Tumor"
         echo
-        eval $cmd
+       #eval "$cmd"
 
         count=$((count+1))
       

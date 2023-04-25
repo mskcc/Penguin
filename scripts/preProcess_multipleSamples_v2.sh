@@ -1,10 +1,11 @@
 #!/bin/bash
 
-set -e
-set -o pipefail
+
 
 source /home/sumans/miniconda2/bin/activate gddP2
 #conda activate gddP2
+
+set -euo pipefail
 
 # Sequencing Type - WGS or IMPACT
 #seqType="IMPACT"
@@ -29,12 +30,12 @@ if [[ "$seqType" == "IMPACT" ]]; then
 
    # For Tumor Sample
           # sampleTypeTumor=$j
-      sampleID_Tumor=$(echo $i | awk -F'_' '{print $1}')
-      tp=$(echo $i | awk -F'_' '{print $2}')
+      sampleID_Tumor=$(echo "$i" | awk -F'_' '{print $1}')
+      tp=$(echo "$i" | awk -F'_' '{print $2}')
       tumor_Purity=$(echo "scale=1 ; $tp / 100"| bc)
       # echo $tumor_Purity
 
-      impactPanel=$(echo $sampleID_Tumor | cut -d "-" -f4)
+      impactPanel=$(echo "$sampleID_Tumor" | cut -d "-" -f4)
 
       if [[ "$impactPanel" == "IM7" ]]; then
         bedName_impact="IMPACT505_picard_baits-1.interval_list"
@@ -57,7 +58,7 @@ if [[ "$seqType" == "IMPACT" ]]; then
       bamID_Tumor=${sampleID_Tumor}
 
    # For Normal Paired Sample
-      sampleID_Normal=`python convertT2N.py --sID $sampleID_Tumor --aType impact_N`
+      sampleID_Normal=$(python convertT2N.py --sID "$sampleID_Tumor" --aType impact_N)
       bamID_Normal=${sampleID_Normal}
 
       echo
@@ -75,10 +76,10 @@ if [[ "$seqType" == "IMPACT" ]]; then
             $bamID_Normal \
             $tumor_Purity"
 
-      echo $cmd
+      echo "$cmd"
       echo
 
-      eval $cmd
+      eval "$cmd"
       date
       echo "Done"
       echo
@@ -96,15 +97,15 @@ elif [[ "$seqType" == "WES" ]]; then
         sampleType=$j
         sampleID=$(echo $i | awk -F'_' '{print $1}')
         cmoID=$(echo $i | awk -F'_' '{print $2}')
-        bamID=`python convertT2N.py --sID $cmoID --aType WES`
+        bamID=$(python convertT2N.py --sID $cmoID --aType WES)
 
       elif [[  "$j" == "N" ]]; then
         sampleType=$j
         sampleID_T=$(echo $i | awk -F'_' '{print $1}')
-        sampleID=`python convertT2N.py --sID $sampleID_T --aType impact_N`
+        sampleID=$(python convertT2N.py --sID $sampleID_T --aType impact_N)
         cmoID=$(echo $i | awk -F'_' '{print $2}')
-        bamID_T=`python convertT2N.py --sID $cmoID --aType WES`
-        bamID=`python convertT2N.py --sID $bamID_T --aType WES_P --mapFile $mapFile_wes_Path`
+        bamID_T=$(python convertT2N.py --sID $cmoID --aType WES)
+        bamID=$(python convertT2N.py --sID $bamID_T --aType WES_P --mapFile $mapFile_wes_Path)
 
       fi
 
