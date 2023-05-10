@@ -54,7 +54,6 @@ imagePath_echoPreProcessor=$singularity_cache/$image_echoPreProcessor
 imagePath_echoCaller=$singularity_cache/$image_echoCaller
 
 TOP_LEVEL_DIR=${dataDir}
-OUT_DIR=${TOP_LEVEL_DIR}/output_5
 REF_FILE=${TOP_LEVEL_DIR}/input/references/b37.fasta
 BED_FILE=${TOP_LEVEL_DIR}/input/beds/${bedName}
 ANNOTATION_FILE=${TOP_LEVEL_DIR}/input/references/refFlat_withoutPrefix.txt
@@ -88,7 +87,8 @@ GENOME_VERSION=hg19
 # imagePath=$dataDir/$image
 #echo $imagePath
 
-flagDir=$dataDir/flags_5
+flagDir=$dataDir/flag/flag_5
+OUT_DIR=${TOP_LEVEL_DIR}/output/output_5
 outDir_Sample=${OUT_DIR}/${TUMOR_SAMPLE_ID}
 outDir_flatReference=${outDir_Sample}/flatReference
 outDir_preProcessor=${outDir_Sample}/preProcessor

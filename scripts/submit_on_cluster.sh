@@ -2,8 +2,8 @@
 
 dataDir=/juno/work/bergerm1/bergerlab/sumans/Project_BoundlessBio/data
 inputDir=${dataDir}/input
-manifestDir=${inputDir}/manifest/BB_MET_Nov2022
-logDir=${dataDir}/log_v5
+manifestDir=${inputDir}/manifest/BB_EchoCaller_Darwin_May2023
+logDir=${dataDir}/log/log_5
 
 mkdir -p $logDir 2>/dev/null
 
@@ -14,19 +14,17 @@ ts=$(date +%Y%m%d%H%M%S)
 # impactPanel="IM6"
 aType=1
 
-# sampleTrackerFile="Data-2021-11-4.xlsx"
-sampleTrackerFile="allFISHSamples.xlsx"
-mapFile_wes="MSKWESRP.pairing.tsv"
-#subsetFile="amp-with-exome-468.xlsx"
-subsetFile="ListofIDs_8N.xlsx"
+sampleTrackerFile="FileA_export_ecDNATracker_records_230510163847.xlsx"
+subsetFile="FileB_export_ecDNATracker_records_230510163903.xlsx"
+# mapFile_wes="MSKWESRP.pairing.tsv"
 
 # Column number of Sample ID inside manifest file. If the column number is 2, the index will be 1
 sampleIDColumn=0
 tumorPurityColumn=8
 
 sampleTrackerFilePath=${manifestDir}/${sampleTrackerFile}
-mapFile_wes_Path=${manifestDir}/${mapFile_wes}
 subsetFilePath=${manifestDir}/${subsetFile}
+# mapFile_wes_Path=${manifestDir}/${mapFile_wes}
 
 outputManifest="sampleManifest_${ts}_${aType}.txt"
 outputManifestPath=${manifestDir}/${outputManifest}
@@ -73,8 +71,8 @@ for seqType in IMPACT; do
         echo "Sample=$sampleID_Tumor"
         echo "$cmd"
         echo "submitting Job for Sample=$sampleID_Tumor"
-        echo
         eval "$cmd"
+        echo
 
         count=$((count+1))
       
