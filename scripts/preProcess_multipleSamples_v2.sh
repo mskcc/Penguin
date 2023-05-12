@@ -1,7 +1,5 @@
 #!/bin/bash
 
-
-
 source /home/sumans/miniconda2/bin/activate gddP2
 #conda activate gddP2
 
@@ -19,8 +17,6 @@ shift
 bamMirrorPath_impact="/juno/res/dmpcollab/dmpshare/share/irb12_245"
 bamMirrorPath_wes="/juno/work/tempo/wes_repo/Results/v1.4.x/cohort_level/MSKWESRP"
 
-#bedName_wes="xgen-exome-research-panel-v2-targets-hg19.bed"
-#bedNameImage_wes="xgen-exome-research-panel-v2-targets-hg19.bed"
 bedName_wes="xgen-exome-research-panel-v2-targets-hg19-no-chr.bed"
 bedNameImage_wes="xgen-exome-research-panel-v2-targets-hg19-no-chr.bed"
 
@@ -34,47 +30,49 @@ if [[ "$seqType" == "IMPACT" ]]; then
       tp=$(echo "$i" | awk -F'_' '{print $2}')
       tumor_Purity=$(echo "scale=1 ; $tp / 100"| bc)
       # echo $tumor_Purity
-
+      somaticStatus=$(echo "$i" | awk -F'_' '{print $3}')
       impactPanel=$(echo "$sampleID_Tumor" | cut -d "-" -f4)
+      
 
       if [[ "$impactPanel" == "IM7" ]]; then
         bedName_impact="IMPACT505_picard_baits-1.interval_list"
-        bedNameImage_impact="IMPACT505_picard_baits.bed"
+        # bedNameImage_impact="IMPACT505_picard_baits.bed"
 
       elif [[ "$impactPanel" == "IM6" ]]; then
         bedName_impact="IMPACT468_picard_baits.interval_list"
-        bedNameImage_impact="IMPACT468_picard_baits.interval_list"
+        # bedNameImage_impact="IMPACT468_picard_baits.interval_list"
 
       elif [[ "$impactPanel" == "IM5" ]]; then
         bedName_impact="cv5_picard_baits_withoutHeaders.interval_list"
-        bedNameImage_impact="cv5_picard_baits_withoutHeaders.interval_list"
+        # bedNameImage_impact="cv5_picard_baits_withoutHeaders.interval_list"
 
       elif [[ "$impactPanel" == "IM3" ]]; then
         bedName_impact="cv3_hg19_picard_baits_withoutHeaders.interval_list"
-        bedNameImage_impact="cv3_hg19_picard_baits_withoutHeaders.interval_list"
+        # bedNameImage_impact="cv3_hg19_picard_baits_withoutHeaders.interval_list"
 
       fi
 
-      bamID_Tumor=${sampleID_Tumor}
+      # bamID_Tumor=${sampleID_Tumor}
 
    # For Normal Paired Sample
       sampleID_Normal=$(python convertT2N.py --sID "$sampleID_Tumor" --aType impact_N)
-      bamID_Normal=${sampleID_Normal}
+      # bamID_Normal=${sampleID_Normal}
 
       echo
-      echo "Sample=$sampleID_Tumor"
+      echo "Sample = $sampleID_Tumor"
+      echo "Tumor Purity = $tp"
+      echo "Somatic Status = $somaticStatus"
       echo
       date
+
       cmd="sh preProcess_v2.sh \
-            $bamMirrorPath_impact \
-            $sampleID_Tumor \
-            $sampleID_Normal \
-            $bedName_impact \
-            $bedNameImage_impact \
-            $seqType \
-            $bamID_Tumor \
-            $bamID_Normal \
-            $tumor_Purity"
+      $bamMirrorPath_impact \
+      $sampleID_Tumor \
+      $sampleID_Normal \
+      $bedName_impact \
+      $seqType \
+      $tumor_Purity \
+      $somaticStatus"
 
       echo "$cmd"
       echo

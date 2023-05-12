@@ -3,24 +3,22 @@
 dataDir=/juno/work/bergerm1/bergerlab/sumans/Project_BoundlessBio/data
 inputDir=${dataDir}/input
 manifestDir=${inputDir}/manifest/BB_EchoCaller_Darwin_May2023
-logDir=${dataDir}/log/log_5
+logDir=${dataDir}/log/log_6
 
 mkdir -p $logDir 2>/dev/null
 
 ts=$(date +%Y%m%d%H%M%S)
 
-#seqType="IMPACT"
-#impactPanel="IM7"
-# impactPanel="IM6"
 aType=1
 
-sampleTrackerFile="FileA_export_ecDNATracker_records_230510163847.xlsx"
-subsetFile="FileB_export_ecDNATracker_records_230510163903.xlsx"
+sampleTrackerFile="FileA_export_ecDNATracker_records_230512151258.xlsx"
+subsetFile="FileB_export_ecDNATracker_records_230512151316.xlsx"
 # mapFile_wes="MSKWESRP.pairing.tsv"
 
 # Column number of Sample ID inside manifest file. If the column number is 2, the index will be 1
 sampleIDColumn=0
-tumorPurityColumn=8
+tumorPurityColumn=1
+somaticStatusColumn=2
 
 sampleTrackerFilePath=${manifestDir}/${sampleTrackerFile}
 subsetFilePath=${manifestDir}/${subsetFile}
@@ -53,20 +51,20 @@ for seqType in IMPACT; do
 
   if [[ "$seqType" == "IMPACT" ]]; then
 
-    for i in $(cat "$outputManifestPath"| tail -n +2 | awk -F "\t" -v sampleIDColumn=$(expr $sampleIDColumn + 1) -v tumorPurityColumn=$(expr $tumorPurityColumn + 1) '{print $sampleIDColumn"_"$tumorPurityColumn}'); do
+    for i in $(cat "$outputManifestPath" | awk -F "\t" -v sampleIDColumn=$(expr $sampleIDColumn + 1) -v tumorPurityColumn=$(expr $tumorPurityColumn + 1) -v somaticStatusColumn=$(expr $somaticStatusColumn + 1) '{print $sampleIDColumn"_"$tumorPurityColumn"_"$somaticStatusColumn}'); do
 
       sampleID_Tumor=$(echo "$i" | awk -F'_' '{print $1}')
 
       cmd="bsub \
-          -W 72:00 \
-          -n 4 \
-          -R 'rusage[mem=64]' \
-          -J 'echo.preProcess.${sampleID_Tumor}' \
-          -o '${logDir}/echo.preProcess.${sampleID_Tumor}.${ts}.stdout' \
-          -e '${logDir}/echo.preProcess.${sampleID_Tumor}.${ts}.stderr' \
-          ./preProcess_multipleSamples_v2.sh \
-          $seqType \
-          $i"
+      -W 72:00 \
+      -n 4 \
+      -R 'rusage[mem=64]' \
+      -J 'echo.preProcess.${sampleID_Tumor}' \
+      -o '${logDir}/echo.preProcess.${sampleID_Tumor}.${ts}.stdout' \
+      -e '${logDir}/echo.preProcess.${sampleID_Tumor}.${ts}.stderr' \
+      ./preProcess_multipleSamples_v2.sh \
+      $seqType \
+      $i"
 
         echo "Sample=$sampleID_Tumor"
         echo "$cmd"
@@ -75,10 +73,12 @@ for seqType in IMPACT; do
         echo
 
         count=$((count+1))
-      
-      done
 
-    fi
+        exit 1
+      
+    done
+
+  fi
 
 done
 
