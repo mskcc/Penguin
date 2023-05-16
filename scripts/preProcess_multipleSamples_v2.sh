@@ -52,6 +52,12 @@ if [[ "$seqType" == "IMPACT" ]]; then
 
       fi
 
+      # if [[ "$impactPanel" == "IM3" ]] || [[ "$impactPanel" == "IM5" ]] || [[ "$impactPanel" == "IM6" ]]; then
+      #   refFile="b37.fasta"
+      # elif [[ "$impactPanel" == "IM7" ]]; then
+      #   refFile="GRCh37_plus_virus.fa"
+      # fi
+
       # bamID_Tumor=${sampleID_Tumor}
 
    # For Normal Paired Sample
@@ -115,7 +121,8 @@ elif [[ "$seqType" == "WES" ]]; then
             $bedNameImage_wes \
             $seqType \
             $sampleType \
-            $bamID"
+            $bamID \
+            $refFile"
 
       echo $cmd
       echo

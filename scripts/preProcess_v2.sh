@@ -7,6 +7,7 @@ source /home/sumans/miniconda2/bin/activate gddP2
 set -euo pipefail
 
 module load singularity/3.7.1
+module load samtools
 
 bamMirrorPath=$1
 echo "BAM Mirror = $bamMirrorPath"
@@ -32,6 +33,10 @@ shift
 somaticStatus=$1
 shift
 
+# refFile=$1
+# shift
+
+
 keyFile="/juno/res/dmpcollab/dmprequest/12-245/key.txt"
 
 dataDir=/juno/work/bergerm1/bergerlab/sumans/Project_BoundlessBio/data
@@ -46,7 +51,11 @@ imagePath_echoPreProcessor=$singularity_cache/$image_echoPreProcessor
 imagePath_echoCaller=$singularity_cache/$image_echoCaller
 
 TOP_LEVEL_DIR=${dataDir}
-REF_FILE=${TOP_LEVEL_DIR}/input/references/b37.fasta
+refFile1="b37.fasta"
+refFile2="GRCh37_plus_virus.fa"
+# REF_FILE=${TOP_LEVEL_DIR}/input/references/b37.fasta
+# REF_FILE=${TOP_LEVEL_DIR}/input/references/GRCh37_plus_virus.fa
+# REF_FILE=${TOP_LEVEL_DIR}/input/references/${refFile}
 BED_FILE=${TOP_LEVEL_DIR}/input/beds/${bedName}
 ANNOTATION_FILE=${TOP_LEVEL_DIR}/input/references/refFlat_withoutPrefix.txt
 EXCLUDE_FILE=${TOP_LEVEL_DIR}/input/references/human.hg19.excl.tsv
@@ -113,6 +122,20 @@ if [[ ! -f $flag_done ]]; then
     if [[ -f ${bamFilePath_T} ]]; then
         echo "BAM File Paths exists for Tumor Sample....."
         bamDir_T=$(dirname "$bamFilePath_T")
+        BAMHeaderCount=$(samtools view -H "$bamFilePath_T"| grep '^@SQ' | wc -l)
+        if [[ $BAMHeaderCount -ge 85 ]]; then
+          REF_FILE=${TOP_LEVEL_DIR}/input/references/${refFile2}
+          echo "Header Count inside BAM File=$BAMHeaderCount"
+          echo "BAM file aligned with b37 + virus Reference ....."
+          echo "Reference File = $REF_FILE"
+        else 
+          REF_FILE=${TOP_LEVEL_DIR}/input/references/${refFile1}
+          echo "Header Count inside BAM File=$BAMHeaderCount"
+          echo "BAM file aligned with b37 ....."
+          echo "Reference File = $REF_FILE"
+        fi
+         
+
         # bamName_T=$(basename "$bamFilePath_T")
     fi
 

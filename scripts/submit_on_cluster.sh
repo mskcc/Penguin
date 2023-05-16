@@ -74,7 +74,7 @@ for seqType in IMPACT; do
 
         count=$((count+1))
 
-        exit 1
+        # exit 1
       
     done
 
