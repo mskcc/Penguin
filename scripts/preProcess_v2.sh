@@ -75,8 +75,8 @@ TUMOR_PURITY=${tumor_Purity}
 GENOME_VERSION=hg19
 
 
-flagDir=$dataDir/flag/flag_6
-OUT_DIR=${TOP_LEVEL_DIR}/output/output_6
+flagDir=$dataDir/flag/flag_7
+OUT_DIR=${TOP_LEVEL_DIR}/output/output_7
 outDir_Sample=${OUT_DIR}/${TUMOR_SAMPLE_ID}
 outDir_flatReference=${outDir_Sample}/flatReference
 outDir_preProcessor=${outDir_Sample}/preProcessor
@@ -123,7 +123,7 @@ if [[ ! -f $flag_done ]]; then
         echo "BAM File Paths exists for Tumor Sample....."
         bamDir_T=$(dirname "$bamFilePath_T")
         BAMHeaderCount=$(samtools view -H "$bamFilePath_T"| grep '^@SQ' | wc -l)
-        if [[ $BAMHeaderCount -ge 85 ]]; then
+        if [[ $BAMHeaderCount -gt 85 ]]; then
           REF_FILE=${TOP_LEVEL_DIR}/input/references/${refFile2}
           echo "Header Count inside BAM File=$BAMHeaderCount"
           echo "BAM file aligned with b37 + virus Reference ....."

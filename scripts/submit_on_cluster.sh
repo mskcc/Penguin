@@ -3,7 +3,7 @@
 dataDir=/juno/work/bergerm1/bergerlab/sumans/Project_BoundlessBio/data
 inputDir=${dataDir}/input
 manifestDir=${inputDir}/manifest/BB_EchoCaller_Darwin_May2023
-logDir=${dataDir}/log/log_6
+logDir=${dataDir}/log/log_7
 
 mkdir -p $logDir 2>/dev/null
 
@@ -11,8 +11,8 @@ ts=$(date +%Y%m%d%H%M%S)
 
 aType=1
 
-sampleTrackerFile="FileA_export_ecDNATracker_records_230512151258.xlsx"
-subsetFile="FileB_export_ecDNATracker_records_230512151316.xlsx"
+sampleTrackerFile="FileA_export_ecDNATracker_records_230517095052.xlsx"
+subsetFile="FileB_export_ecDNATracker_records_230517095113.xlsx"
 # mapFile_wes="MSKWESRP.pairing.tsv"
 
 # Column number of Sample ID inside manifest file. If the column number is 2, the index will be 1
