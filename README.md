@@ -48,6 +48,13 @@ cat cv3_hg19_picard_baits.interval_list | awk '{if ($1 !~ /^@/) {print $0}}' > c
 #Killing all the running jobs on LSF
 bjobs | awk '{print $1}' | tail -n +2 | xargs -I {} bkill {}
 
+# interrogating the intermediate files from ECHO
+cat P-0063489-T01-IM7-P-0063489-N01-IM7.cns_adjusted.gene.tsv |awk '{ if ($10 > 10) print $0 }'
+
+cat P-0063489-T01-IM7-P-0063489-N01-IM7.gene.tsv | awk '{ if ($6 > 10) print $0 }'
+
+cat P-0063489-T01-IM7-P-0063489-N01-IM7.unadjusted.gene.tsv | awk '{ if ($5 > 2) print $0
+
 
 
 ```
