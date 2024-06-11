@@ -37,9 +37,10 @@ shift
 # shift
 
 
-keyFile="/juno/res/dmpcollab/dmprequest/12-245/key.txt"
+# keyFile="/juno/res/dmpcollab/dmprequest/12-245/key.txt"
+keyFile="/juno/dmp/request/12-245/key.txt"
 
-dataDir=/juno/work/bergerm1/bergerlab/sumans/Project_BoundlessBio/data
+dataDir=/juno/cmo/bergerlab/sumans/Project_BoundlessBio/data
 
 singularity_cache=$HOME/.singularity/cache
 
@@ -75,8 +76,8 @@ TUMOR_PURITY=${tumor_Purity}
 GENOME_VERSION=hg19
 
 
-flagDir=$dataDir/flag/flag_7
-OUT_DIR=${TOP_LEVEL_DIR}/output/output_7
+flagDir=$dataDir/flag/flag_8
+OUT_DIR=${TOP_LEVEL_DIR}/output/output_8
 outDir_Sample=${OUT_DIR}/${TUMOR_SAMPLE_ID}
 outDir_flatReference=${outDir_Sample}/flatReference
 outDir_preProcessor=${outDir_Sample}/preProcessor

@@ -1,9 +1,10 @@
 #!/bin/bash
 
-dataDir=/juno/work/bergerm1/bergerlab/sumans/Project_BoundlessBio/data
+# dataDir=/rtsess01/compute/juno/cmo/juno/work/bergerm1/bergerlab/sumans/Project_BoundlessBio/data
+dataDir=/juno/cmo/bergerlab/sumans/Project_BoundlessBio/data
 inputDir=${dataDir}/input
-manifestDir=${inputDir}/manifest/BB_EchoCaller_Darwin_May2023
-logDir=${dataDir}/log/log_7
+manifestDir=${inputDir}/manifest/BB_EchoCaller_GE_Matteo_May2024
+logDir=${dataDir}/log/log_8
 
 mkdir -p $logDir 2>/dev/null
 
@@ -11,8 +12,8 @@ ts=$(date +%Y%m%d%H%M%S)
 
 aType=1
 
-sampleTrackerFile="FileA_export_ecDNATracker_records_230517095052.xlsx"
-subsetFile="FileB_export_ecDNATracker_records_230517095113.xlsx"
+sampleTrackerFile="FileA_export_ecDNATracker_records_240524135226.xlsx"
+subsetFile="FileB_export_ecDNATracker_records_240524135232.xlsx"
 # mapFile_wes="MSKWESRP.pairing.tsv"
 
 # Column number of Sample ID inside manifest file. If the column number is 2, the index will be 1
@@ -59,9 +60,9 @@ for seqType in IMPACT; do
       -W 72:00 \
       -n 4 \
       -R 'rusage[mem=64]' \
-      -J 'echo.preProcess.${sampleID_Tumor}' \
-      -o '${logDir}/echo.preProcess.${sampleID_Tumor}.${ts}.stdout' \
-      -e '${logDir}/echo.preProcess.${sampleID_Tumor}.${ts}.stderr' \
+      -J 'echo.${sampleID_Tumor}' \
+      -o '${logDir}/${sampleID_Tumor}.${ts}.stdout' \
+      -e '${logDir}/${sampleID_Tumor}.${ts}.stderr' \
       ./preProcess_multipleSamples_v2.sh \
       $seqType \
       $i"

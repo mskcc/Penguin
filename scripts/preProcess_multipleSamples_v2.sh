@@ -14,7 +14,8 @@ shift
 i=$1;
 shift
 
-bamMirrorPath_impact="/juno/res/dmpcollab/dmpshare/share/irb12_245"
+# bamMirrorPath_impact="/juno/res/dmpcollab/dmpshare/share/irb12_245"
+bamMirrorPath_impact="/juno/dmp/share/irb12_245"
 bamMirrorPath_wes="/juno/work/tempo/wes_repo/Results/v1.4.x/cohort_level/MSKWESRP"
 
 bedName_wes="xgen-exome-research-panel-v2-targets-hg19-no-chr.bed"

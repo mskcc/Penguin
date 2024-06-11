@@ -1,7 +1,7 @@
 #!/bin/bash
 
-dataDir=/juno/work/bergerm1/bergerlab/sumans/Project_BoundlessBio/data
-outputDir=${dataDir}/output/output_7
+dataDir=/juno/cmo/bergerlab/sumans/Project_BoundlessBio/data
+outputDir=${dataDir}/output/output_8
 mergedFile=${outputDir}/merged.ECHO_results.csv
 
 count=0
