@@ -9,6 +9,7 @@ logDir=${dataDir}/log/log_8
 
 mkdir -p $logDir 2>/dev/null
 
+
 ts=$(date +%Y%m%d%H%M%S)
 
 aType=1
