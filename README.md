@@ -15,10 +15,49 @@ echo $singularity_cache
 singularity build --docker-login  ${singularity_cache}/boundlessbio-echo-preprocessor-v2.0.4.img docker://boundlessbio/echo-preprocessor:release-v2.0.4
 ```
 
+### Running Preprocessor manually
+
+```
+sh preProcess_multipleSamples_v2.sh IMPACT IM6 2
+
+nohup sh preProcess_multipleSamples_v2.sh IMPACT IM6 2 &
+
+sh preProcess_v2.sh /juno/res/dmpcollab/dmpshare/share/irb12_245 P-0034080-T01-IM6 P-0034080-N01-IM6 IMPACT468_picard_baits.interval_list IMPACT468_picard_baits.interval_list IMPACT P-0034080-T01-IM6 P-0034080-N01-IM6
+
+python3.8 generateBAMFilePath.py /juno/res/dmpcollab/dmpreque
+st/12-245/key.txt /juno/res/dmpcollab/dmpshare/share/irb12_245 P-0034080-T01-IM6 T
+
+rm -rf output_3
+
+rm -rf flags_3
+
+```
+
+### Housekeeping Commands
+
+```
+for i in $(ls echo.preProcess.P-0*stdout); do echo $i; cat $i | tail -n 50 | head -n 6; done
+
+bjobs
+bjobs -l 39777158
+bkill -r $jobID
+
+#For removing headers inside the BED file
+cat cv3_hg19_picard_baits.interval_list | awk '{if ($1 !~ /^@/) {print $0}}' > cv3_hg19_picard_baits_withoutHeaders.interval_list
+
+#Killing all the running jobs on LSF
+bjobs | awk '{print $1}' | tail -n +2 | xargs -I {} bkill {}
+
+# interrogating the intermediate files from ECHO
+cat P-0063489-T01-IM7-P-0063489-N01-IM7.cns_adjusted.gene.tsv |awk '{ if ($10 > 10) print $0 }'
+
+cat P-0063489-T01-IM7-P-0063489-N01-IM7.gene.tsv | awk '{ if ($6 > 10) print $0 }'
+
+cat P-0063489-T01-IM7-P-0063489-N01-IM7.unadjusted.gene.tsv | awk '{ if ($5 > 2) print $0
 
 
 
-
+```
 
 
 ## Version 1
@@ -144,4 +183,3 @@ bsub -W 20:00 -n 8 -R 'rusage[mem=15]' -J 'echo.all' -o 'merge.all.out' -e 'merg
 ```
 /juno/work/ci/resources/genomes/GRCh37/fasta/b37.fasta
 ```
-
