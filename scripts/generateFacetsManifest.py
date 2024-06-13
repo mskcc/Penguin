@@ -30,16 +30,18 @@ def is_xlsx(file) :
 parser = argparse.ArgumentParser()
 # FileA to change
 parser.add_argument('--sampleManifest', required=True)
+# FileB, list of genes
+parser.add_argument('--subsetFile', required=True)
 # Path to the output FileA
 parser.add_argument('--outputFile', required=True)
-# Path to FileB. Assumes it is not an xlsx
-parser.add_argument('--subsetFile', required=True)
+# Path to facets report
+parser.add_argument('--facetsReport', required=True)
 # ID Column
 parser.add_argument('--sampleIDColumn', required=True)
 # Purity Column
 parser.add_argument('--samplePurityColumn', required=True)
-# Data directory
-parser.add_argument('--dataDirectory', required=True)
+# Default purity
+parser.add_argument('--defaultPurity', required=True)
 
 args = parser.parse_args()
 
@@ -48,34 +50,16 @@ FileB = args.subsetFile
 IDCol = int(args.sampleIDColumn)
 PurityCol = int(args.samplePurityColumn)
 outFile = args.outputFile
-dataDir = args.dataDirectory
+facetsReport = args.facetsReport
+defaultPurity = int(args.defaultPurity)
 
-###################
-# Generate Facets #
-###################
-
-from facetsAPI import *
-
-clinical_sample_file= dataDir + "/input/data_clinical_sample.oncokb.txt"
-facets_dir="/work/ccs/shared/resources/impact/facets/all/"
-dummyReport = "./facets_report.to_delete"
-
-prepared_metadata = FacetsMeta(clinical_sample_file, facets_dir, "purity")
-prepared_metadata.setSingleRunPerSample(True,True)
-prepared_metadata.selectSamplesFromFile(FileB)
-
-prepared_metadata.buildFacetsMeta()
-test_dataset = FacetsDataset(prepared_metadata)
-test_dataset.buildFacetsDataset()
-
-# Write a report to delete later
-test_dataset.writeReport(dummyReport)
 
 ##################
 # Convert Purity #
 ##################
 
-facets_df = pd.read_csv(dummyReport, sep = '\t', index_col = False)
+facets_df = pd.read_csv(facetsReport, sep = '\t', index_col = False)
+fileB_df = pd.read_csv(FileB, sep = '\t', index_col = False, header = None)
 
 # get FileA into a dataframe
 if is_xlsx(FileA) :
@@ -86,20 +70,21 @@ else :
     fileA_df = pd.read_csv(FileA, sep = '\t', header = None)
 
 # Get the subset of fileA
-subset_fileA_df = fileA_df[fileA_df.iloc[:, IDCol].isin(facets_df['ID'])]
+listOfIDs=fileB_df.iloc[:,0].unique().tolist()
+subset_fileA_df=fileA_df[fileA_df.iloc[:,IDCol].isin(listOfIDs)]
 
 # Convert purity
 facets_df['Facets Purity'] = (facets_df['Facets Purity'] * 100).apply(lambda x: math.ceil(x)).astype(int)
 
-# Ensure the correct ordering
+# Check facets complete
 if len(subset_fileA_df) != len(facets_df) :
-    print("FileB not a subset of FileA")
-    sys.exit(1)
-subset_fileA_df = subset_fileA_df.sort_values(by = subset_fileA_df.columns[IDCol], ascending = True)
-facets_df = facets_df.sort_values(by = 'ID', ascending = True)
+    print("WARNING: Facets not complete, using default where incomplete")
 
-# Replace purity
-subset_fileA_df.iloc[:, PurityCol] = facets_df['Facets Purity'].values
+# replace
+subset_fileA_df.iloc[:, PurityCol] = defaultPurity
 
+for index, row in facets_df.iterrows() :
+    idx = (subset_fileA_df.iloc[:, IDCol] == row['ID']).idxmax()
+    subset_fileA_df.at[idx, PurityCol] = row['Facets Purity']
 # Export
 subset_fileA_df.to_csv(outFile, sep='\t', index = False, header = False)

@@ -38,6 +38,7 @@ somaticStatusColumn=2
 
 # True if we want to use facets purity instead of pathology (True or False)
 useFacetsPurity=True
+defaultPurity=20
 
 # Analysis type (1 or 2)
 aType=1

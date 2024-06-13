@@ -21,6 +21,7 @@ aType=$aType
 sampleTrackerFile=$sampleTracker
 subsetFile=$sampleSubset
 facetsPurity=$useFacetsPurity
+defaultPurity=$defaultPurity
 
 # Column numbers
 sampleIDColumn=$sampleIDColumn
@@ -44,26 +45,50 @@ logDir=${dataDir}/log/${logDirName}
 mkdir -p $logDir 2>/dev/null
 
 sampleTrackerFilePath=${manifestDir}/${sampleTrackerFile}
+outputDirName=$outputDirectoryName
+outputDir=${dataDir}/output/${outputDirName}
+sampleReportFacetsName="${outputDir}/sample_report_facets.txt"
 subsetFilePath=${manifestDir}/${subsetFile}
 outputManifest="sampleManifest_${ts}_${aType}.txt"
 outputManifestPath=${manifestDir}/${outputManifest}
 
+if [[ $subsetFile == *.xlsx ]]; then
+    echo "Converting Sample List to txt"
+    txt_name="${subsetFile%.xlsx}.txt"
+    xlsx2csv "${manifestDir}/${subsetFile}" | sed '/^""$/d' > "${manifestDir}/${txt_name}"
+    subsetFile=$txt_name
+    subsetFilePath=${manifestDir}/${subsetFile}
+
+fi
+
+# Create facets sample document
+echo "Creating facets sample"
+cmd="bsub \
+      -W ${clusterTime} \
+      -n ${clusterCPUNum} \
+      -R 'rusage[mem=${clusterMemory}]' \
+      -J 'echo.${sampleID_Tumor}' \
+      -o '${logDir}/${sampleID_Tumor}.facets_sample.${ts}.stdout' \
+      -e '${logDir}/${sampleID_Tumor}.facets_sample.${ts}.stderr' \
+      python3.8 generateFacetsSampleReport.py --subsetFile $subsetFilePath --outputFile $sampleReportFacetsName --dataDirectory $dataDir"
+echo "$cmd"
+eval "$cmd"
+echo
+
 # If using facets purity change
 if [[ $facetsPurity == True ]]; then
-
-    if [[ $subsetFile == *.xlsx ]]; then
-        echo "Converting Sample List to txt"
-        txt_name="${subsetFile%.xlsx}.txt"
-        xlsx2csv "${manifestDir}/${subsetFile}" | sed '/^""$/d' > "${manifestDir}/${txt_name}"
-        subsetFile=$txt_name
-        subsetFilePath=${manifestDir}/${subsetFile}
-
-    fi
 
     echo "Using facets purity"
     echo "New File location: ${manifestDir}/${sampleTrackerFile}.facets.tsv"
     newManifest="${sampleTrackerFilePath}.facets.tsv"
-    cmd="python3.8 generateFacetsManifest.py --sampleManifest $sampleTrackerFilePath --subsetFile $subsetFilePath --outputFile $newManifest --sampleIDColumn $sampleIDColumn --samplePurityColumn $tumorPurityColumn --dataDirectory $dataDir"
+    cmd="bsub \
+      -W ${clusterTime} \
+      -n ${clusterCPUNum} \
+      -R 'rusage[mem=${clusterMemory}]' \
+      -J 'echo.${sampleID_Tumor}' \
+      -o '${logDir}/${sampleID_Tumor}.facets_sample.${ts}.stdout' \
+      -e '${logDir}/${sampleID_Tumor}.facets_sample.${ts}.stderr' \
+      python3.8 generateFacetsManifest.py --sampleManifest $sampleTrackerFilePath --subsetFile $subsetFilePath --outputFile $newManifest --facetsReport $sampleReportFacetsName --sampleIDColumn $sampleIDColumn --samplePurityColumn $tumorPurityColumn --defaultPurity $defaultPurity"
     echo "$cmd"
     eval "$cmd"
     echo
