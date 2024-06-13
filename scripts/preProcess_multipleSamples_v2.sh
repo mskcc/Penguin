@@ -1,7 +1,7 @@
 #!/bin/bash
+#source /home/sumans/miniconda2/bin/activate gddP2
+source /home/yuk3/miniconda3/bin/activate ecDNA
 
-source /home/sumans/miniconda2/bin/activate gddP2
-#conda activate gddP2
 
 set -euo pipefail
 
@@ -13,6 +13,7 @@ shift
 
 i=$1;
 shift
+
 
 # bamMirrorPath_impact="/juno/res/dmpcollab/dmpshare/share/irb12_245"
 bamMirrorPath_impact="/juno/dmp/share/irb12_245"

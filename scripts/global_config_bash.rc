@@ -1,0 +1,57 @@
+#!/bin/bash
+
+#################################################
+#                                               #
+# Default config file for ecDNA IMPACT analysis #
+#                                               #
+#################################################
+
+###############
+# directories #
+###############
+
+# Directory containing input folder
+dataDirectory="/juno/cmo/bergerlab/yuk3/Project_ecDNA/data"
+
+# Name of manifest directory
+manifestDirectoryName=BB_EchoCaller_KevinYu_Practise_June2024
+
+# Output, log and flag directories. These are all in the data directory
+outputDirectoryName=output_8
+logDirectoryName=log_8
+flagDirectoryName=flag_8
+
+###########
+# samples #
+###########
+
+# List of all samples and status, in the manifest directory
+sampleTracker="FileA_export_ecDNATracker_records_240524135226.xlsx"
+
+# Subset of samples to use
+sampleSubset="FileB_export_ecDNATracker_records_240524135232.xlsx"
+
+# Columns of information in the sampleTracker (0 indexed)
+sampleIDColumn=0
+tumorPurityColumn=1
+somaticStatusColumn=2
+
+# True if we want to use facets purity instead of pathology (True or False)
+useFacetsPurity=True
+
+# Analysis type (1 or 2)
+aType=1
+
+###############
+# clusterInfo #
+###############
+
+# Number of CPUs
+clusterCPUNum=4
+
+# Memory per CPU
+clusterMemory=64
+
+# Allotted time (format: 72:00 -> 72 hours or 72 -> 72 hours)
+clusterTime="72"
+

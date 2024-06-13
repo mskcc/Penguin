@@ -1,8 +1,16 @@
 #!/bin/bash
 
-#source /home/sumans/miniconda2/bin/activate  base && conda activate "gddP2"
+# Set up config file
+if [[ -z ${CONFIG_FILE} ]]; then 
+    echo "Config file not found. Run submit_on_cluster.sh instead"
+    exit 1
+fi
 
-source /home/sumans/miniconda2/bin/activate gddP2
+source $CONFIG_FILE
+outputDirName=$outputDirectoryName
+flagDirName=$flagDirectoryName
+
+source /home/yuk3/miniconda3/bin/activate ecDNA
 
 set -euo pipefail
 
@@ -40,15 +48,14 @@ shift
 # keyFile="/juno/res/dmpcollab/dmprequest/12-245/key.txt"
 keyFile="/juno/dmp/request/12-245/key.txt"
 
-dataDir=/juno/cmo/bergerlab/sumans/Project_BoundlessBio/data
+dataDir=$dataDirectory
 
-singularity_cache=$HOME/.singularity/cache
+singularity_cache=/home/sumans/.singularity/cache
 
 image_echoPreProcessor="boundlessbio-echo-preprocessor-v2.0.4.img"
 image_echoCaller="boundlessbio-echo-caller-v2.4.0.img"
 
 imagePath_echoPreProcessor=$singularity_cache/$image_echoPreProcessor
-#echo $imagePath_echoPreProcessor
 imagePath_echoCaller=$singularity_cache/$image_echoCaller
 
 TOP_LEVEL_DIR=${dataDir}
@@ -76,8 +83,8 @@ TUMOR_PURITY=${tumor_Purity}
 GENOME_VERSION=hg19
 
 
-flagDir=$dataDir/flag/flag_8
-OUT_DIR=${TOP_LEVEL_DIR}/output/output_8
+flagDir=$dataDir/flag/${flagDirName}
+OUT_DIR=${TOP_LEVEL_DIR}/output/${outputDirName}
 outDir_Sample=${OUT_DIR}/${TUMOR_SAMPLE_ID}
 outDir_flatReference=${outDir_Sample}/flatReference
 outDir_preProcessor=${outDir_Sample}/preProcessor
@@ -120,6 +127,8 @@ if [[ ! -f $flag_done ]]; then
 
     fi
 
+
+
     if [[ -f ${bamFilePath_T} ]]; then
         echo "BAM File Paths exists for Tumor Sample....."
         bamDir_T=$(dirname "$bamFilePath_T")
@@ -146,7 +155,6 @@ if [[ ! -f $flag_done ]]; then
         # bamName_N=$(basename "$bamFilePath_N")
 
     fi
-
 
     if [[ "$somaticStatus" == "Unmatched" ]]; then
 
@@ -200,6 +208,7 @@ if [[ ! -f $flag_done ]]; then
       echo "Running Step 2: ECHO Pre-Processor - Tumor Normal Mode ....."
       echo "$cmd"
       echo
+
       # eval $cmd
 
       if ! eval "$cmd" ; then

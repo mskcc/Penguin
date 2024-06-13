@@ -59,4 +59,7 @@ def get_selected_genes(useSingleRun, allowDefaults):
                     outfile.write(str(cur_gene.spans_segs) + "\t")
                     outfile.write("\n")
 if __name__ == '__main__':
+    # TODO
+    print("STOP")
+    sys.exit()
     get_selected_genes(True, True)

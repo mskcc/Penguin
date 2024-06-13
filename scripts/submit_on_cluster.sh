@@ -1,55 +1,96 @@
 #!/bin/bash
 
+# config file
+CONFIG_FILE=$1
+source $CONFIG_FILE
+export CONFIG_FILE
 
-# dataDir=/rtsess01/compute/juno/cmo/juno/work/bergerm1/bergerlab/sumans/Project_BoundlessBio/data
-dataDir=/juno/cmo/bergerlab/sumans/Project_BoundlessBio/data
+################################
+# set up using the config file #
+################################
+
+# Directories
+dataDir=$dataDirectory
+manifestDirName=$manifestDirectoryName
+logDirName=$logDirectoryName
+
+# Analysis type
+aType=$aType
+
+# Manifest doc
+sampleTrackerFile=$sampleTracker
+subsetFile=$sampleSubset
+facetsPurity=$useFacetsPurity
+
+# Column numbers
+sampleIDColumn=$sampleIDColumn
+tumorPurityColumn=$tumorPurityColumn
+somaticStatusColumn=$somaticStatusColumn
+
+# Cluster stats
+clusterCPUNum=$clusterCPUNum
+clusterMemory=$clusterMemory
+clusterTime=$clusterTime
+if [[ $clusterTime != *:* ]]; then
+    clusterTime="${clusterTime}:00"
+fi
+
+################################
+
+# child directory paths
 inputDir=${dataDir}/input
-manifestDir=${inputDir}/manifest/BB_EchoCaller_GE_Matteo_May2024
-logDir=${dataDir}/log/log_8
-
+manifestDir=${inputDir}/manifest/${manifestDirName}
+logDir=${dataDir}/log/${logDirName}
 mkdir -p $logDir 2>/dev/null
-
-
-ts=$(date +%Y%m%d%H%M%S)
-
-aType=1
-
-sampleTrackerFile="FileA_export_ecDNATracker_records_240524135226.xlsx"
-subsetFile="FileB_export_ecDNATracker_records_240524135232.xlsx"
-# mapFile_wes="MSKWESRP.pairing.tsv"
-
-# Column number of Sample ID inside manifest file. If the column number is 2, the index will be 1
-sampleIDColumn=0
-tumorPurityColumn=1
-somaticStatusColumn=2
 
 sampleTrackerFilePath=${manifestDir}/${sampleTrackerFile}
 subsetFilePath=${manifestDir}/${subsetFile}
-# mapFile_wes_Path=${manifestDir}/${mapFile_wes}
-
 outputManifest="sampleManifest_${ts}_${aType}.txt"
 outputManifestPath=${manifestDir}/${outputManifest}
 
+# If using facets purity change
+if [[ $facetsPurity == True ]]; then
+
+    if [[ $subsetFile == *.xlsx ]]; then
+        echo "Converting Sample List to txt"
+        txt_name="${subsetFile%.xlsx}.txt"
+        xlsx2csv "${manifestDir}/${subsetFile}" | sed '/^""$/d' > "${manifestDir}/${txt_name}"
+        subsetFile=$txt_name
+        subsetFilePath=${manifestDir}/${subsetFile}
+
+    fi
+
+    echo "Using facets purity"
+    echo "New File location: ${manifestDir}/${sampleTrackerFile}.facets.tsv"
+    newManifest="${sampleTrackerFilePath}.facets.tsv"
+    cmd="python3.8 generateFacetsManifest.py --sampleManifest $sampleTrackerFilePath --subsetFile $subsetFilePath --outputFile $newManifest --sampleIDColumn $sampleIDColumn --samplePurityColumn $tumorPurityColumn --dataDirectory $dataDir"
+    echo "$cmd"
+    eval "$cmd"
+    echo
+
+    sampleTrackerPath=$newManifest
+fi
+
+ts=$(date +%Y%m%d%H%M%S)
 
 if [[ ! -f $outputManifest ]] && [[ "$aType" == 1 ]]; then
-    # cmd="python3.8 generateManifest.py --impactPanel $impactPanel --sampleManifest $sampleTrackerFilePath --outputFile $outputManifestPath --aType $aType"
-
-    cmd="python3.8 generateManifest.py --sampleManifest $sampleTrackerFilePath --outputFile $outputManifestPath --subsetFile $subsetFilePath --aType $aType --sampleIDColumn $sampleIDColumn"
+    cmd="python3.8 generateManifest_v2.py --sampleManifest $sampleTrackerFilePath --outputFile $outputManifestPath --subsetFile $subsetFilePath --aType $aType --sampleIDColumn $sampleIDColumn"
     echo "$cmd"
     eval "$cmd"
     echo
 
 
 elif [[ ! -f $outputManifest ]] && [[ "$aType" == 2 ]]; then
-    cmd="python3.8 generateManifest.py --impactPanel $impactPanel --sampleManifest $sampleTrackerFilePath --outputFile $outputManifestPath --subsetFile $subsetFilePath --aType $aType --sampleIDColumn $sampleIDColumn"
+    cmd="python3.8 generateManifest_v2.py --impactPanel $impactPanel --sampleManifest $sampleTrackerFilePath --outputFile $outputManifestPath --subsetFile $subsetFilePath --aType $aType --sampleIDColumn $sampleIDColumn"
     echo "$cmd"
     eval "$cmd"
 
 fi
 
+# Counts the number of jobs
 count=0;
 
-# for seqType in IMPACT WES; do
+# TODO: remove this for? since we are only doing impact rn
 for seqType in IMPACT; do
 
   if [[ "$seqType" == "IMPACT" ]]; then
@@ -59,9 +100,9 @@ for seqType in IMPACT; do
       sampleID_Tumor=$(echo "$i" | awk -F'_' '{print $1}')
 
       cmd="bsub \
-      -W 72:00 \
-      -n 4 \
-      -R 'rusage[mem=64]' \
+      -W ${clusterTime} \
+      -n ${clusterCPUNum} \
+      -R 'rusage[mem=${clusterMemory}]' \
       -J 'echo.${sampleID_Tumor}' \
       -o '${logDir}/${sampleID_Tumor}.${ts}.stdout' \
       -e '${logDir}/${sampleID_Tumor}.${ts}.stderr' \
@@ -76,8 +117,6 @@ for seqType in IMPACT; do
         echo
 
         count=$((count+1))
-
-        # exit 1
       
     done
 

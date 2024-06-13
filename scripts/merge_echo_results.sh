@@ -1,7 +1,14 @@
 #!/bin/bash
 
-dataDir=/juno/cmo/bergerlab/sumans/Project_BoundlessBio/data
-outputDir=${dataDir}/output/output_8
+# config file
+CONFIG_FILE=$1
+source $CONFIG_FILE
+export CONFIG_FILE
+
+
+dataDir=$dataDirectory
+flagDirName=$flagDirectoryName
+outputDir=${dataDir}/output/${outputDirectoryName}
 mergedFile=${outputDir}/merged.ECHO_results.csv
 
 count=0
