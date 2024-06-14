@@ -17,9 +17,9 @@ dataDirectory="/juno/cmo/bergerlab/yuk3/Project_ecDNA/data"
 manifestDirectoryName=BB_EchoCaller_KevinYu_Practise_June2024
 
 # Output, log and flag directories. These are all in the data directory
-outputDirectoryName=output_8
-logDirectoryName=log_8
-flagDirectoryName=flag_8
+outputDirectoryName=$manifestDirectoryName
+logDirectoryName=$manifestDirectoryName
+flagDirectoryName=$manifestDirectoryName
 
 ###########
 # samples #

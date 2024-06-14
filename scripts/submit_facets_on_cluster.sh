@@ -14,23 +14,20 @@ dataDir=$dataDirectory
 manifestDirName=$manifestDirectoryName
 logDirName=$logDirectoryName
 outDirName=$outputDirectoryName
+flagDirName=${flagDirectoryName}_facets_gene
+flagDir=${dataDir}/flag/${flagDirName}
+
+mkdir -p "$flagDir" 2>/dev/null
 
 # Manifest doc
 subsetFile=$sampleSubset
 
-# Cluster stats
-clusterCPUNum=$clusterCPUNum
-clusterMemory=$clusterMemory
-clusterTime=$clusterTime
-if [[ $clusterTime != *:* ]]; then
-    clusterTime="${clusterTime}:00"
-fi
 
 #################################
 
 
 logDir=${dataDir}/log/${logDirName}/facets_api_pull
-# logDir=${dataDir}/log/log.Legacy/log_BB_EchoCaller_SteveMaron_HER2_Dec2023/facets_api_pull
+mkdir -p "$logDir" 2>/dev/null
 
 inputDir=${dataDir}/input
 manifestDir=${inputDir}/manifest/${manifestDirName}
@@ -46,32 +43,66 @@ fi
 sampleListFile=${manifestDir}/${subsetFile}
 
 outputDir=${dataDir}/output/${outDirName}
-# outputDir=${dataDir}/output/output.Legacy/output_BB_EchoCaller_SteveMaron_HER2_Dec2023
 
 echoReportFile=${outputDir}/merged.ECHO_results.csv
 
-sampleReport="${outputDir}/sample_report_facets.txt"
-geneReport="${outputDir}/gene_report_facets.txt"
-
-mkdir -p $logDir 2>/dev/null
-
-ts=$(date +%Y%m%d%H%M%S)
+mkdir -p "${outputDir}/facets_gene_output" 2>/dev/null
 
 
+if [ -f "$echoReportFile" ]; then
+
+    # Read each line of file
+    while IFS=, read -r sample_id _ gene _; do
+        IFS='-' read -ra parts <<< "$sample_id"
+        sampleID=""
+        for ((i=0; i<4 && i<${#parts[@]}; i++)); do
+            sampleID+="${parts[i]}-"
+        done
+        sampleID=${sampleID%-} 
+
+        
+        # Remove NA
+        if [[ $sampleID == "NA" ]]; then
+            sampleID=""
+        fi
+
+        if [[ $gene != "gene" ]]; then
+            flag_done="${flagDir}/${sampleID}_${gene}.done"
+
+            if [[ ! -f $flag_done ]]; then
+
+                # Run sample
+                if [[ $gene != "gene" ]]; then
+                    cmd="bsub \
+                        -W ${clusterTime} \
+                        -n ${clusterCPUNum} \
+                        -R 'rusage[mem=${clusterMemory}]' \
+                        -J 'facets_api_pull' \
+                        -o '${logDir}/facets_api_pull_${ts}.stdout' \
+                        -e '${logDir}/facets_api_pull_${ts}.stderr' \
+                        sh submit_one_facets.sh ${sampleID} ${gene}"
+                    echo "Submitting ${sampleID} ${gene}"
+                    eval $cmd
+
+                fi
+            fi      
+        fi
+
+    done < "$echoReportFile"
+fi
 
 
+# cmd="bsub \
+# -W ${clusterTime} \
+# -n ${clusterCPUNum} \
+# -R 'rusage[mem=${clusterMemory}]' \
+# -J 'facets_api_pull' \
+# -o '${logDir}/facets_api_pull_${ts}.stdout' \
+# -e '${logDir}/facets_api_pull_${ts}.stderr' \
+# python3.8 ./Test_facetsApiPull.py ${sampleListFile} ${echoReportFile} ${sampleReport} ${geneReport} ${dataDir}"
 
-cmd="bsub \
--W ${clusterTime} \
--n ${clusterCPUNum} \
--R 'rusage[mem=${clusterMemory}]' \
--J 'facets_api_pull' \
--o '${logDir}/facets_api_pull_${ts}.stdout' \
--e '${logDir}/facets_api_pull_${ts}.stderr' \
-python3.8 ./Test_facetsApiPull.py ${sampleListFile} ${echoReportFile} ${sampleReport} ${geneReport} ${dataDir}"
 
-
-echo "$cmd"
-eval "$cmd"
-echo
+# echo "$cmd"
+# eval "$cmd"
+# echo
 
