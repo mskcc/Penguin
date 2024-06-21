@@ -73,6 +73,7 @@ else :
 listOfIDs=fileB_df.iloc[:,0].unique().tolist()
 subset_fileA_df=fileA_df[fileA_df.iloc[:,IDCol].isin(listOfIDs)]
 
+facets_df['Facets Purity'] = facets_df['Facets Purity'].fillna(defaultPurity/100)
 # Convert purity
 facets_df['Facets Purity'] = (facets_df['Facets Purity'] * 100).apply(lambda x: math.ceil(x)).astype(int)
 

@@ -6,8 +6,6 @@ import pandas as pd
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument('--impactPanel', required=False)
-
 parser.add_argument('--subsetFile', required=False)
 
 parser.add_argument('--sampleManifest', required=True)
@@ -19,9 +17,6 @@ parser.add_argument('--aType', required=True)
 parser.add_argument('--sampleIDColumn', required=False)
 
 args = parser.parse_args()
-
-if args.impactPanel is not None:
-    regString=args.impactPanel
 
 if args.subsetFile is not None:
     subsetFile=args.subsetFile

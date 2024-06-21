@@ -2,20 +2,15 @@
 
 # This script submits one job on the cluster for facets gene
 
-if [[ -z ${CONFIG_FILE} ]]; then 
-    echo "Config file not found. Run submit_facets_on_cluster.sh instead"
-    exit 1
-fi
-
+CONFIG_FILE=$1
+shift
 source $CONFIG_FILE
 
 # Directories
 dataDir=$dataDirectory
-outDirName=$outputDirectoryName
-flagDirName=${flagDirectoryName}_facets_gene
-logDirName=$logDirectoryName
-logDir=${dataDir}/log/${logDirName}/facets_api_pull
-flagDir=${dataDir}/flag/${flagDirName}
+outputDir=$facetsOutputDirectory
+flagDir=$facetsFlagDirectory
+logDir=$facetsLogDirectory
 
 
 # Cluster stats
@@ -35,8 +30,7 @@ echo "Gene: $gene"
 shift
 
 ts=$(date +%Y%m%d%H%M%S)
-outputDir=${dataDir}/output/${outDirName}
-outFile="$outputDir/facets_gene_output/${sampleID}_${gene}.tsv"
+outFile="$outputDir/${sampleID}_${gene}.tsv"
 rm -rf outFile
 # Edit flags
 flag_done="${flagDir}/${sampleID}_${gene}.done"

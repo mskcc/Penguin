@@ -1,14 +1,12 @@
 #!/bin/bash
 
 # Set up config file
-if [[ -z ${CONFIG_FILE} ]]; then 
-    echo "Config file not found. Run submit_on_cluster.sh instead"
-    exit 1
-fi
-
+CONFIG_FILE=$1
+shift
 source $CONFIG_FILE
-outputDirName=$outputDirectoryName
-flagDirName=$flagDirectoryName
+
+outputDir=$echoOutputDirectory
+flagDir=$echoFlagDirectory
 
 source /home/yuk3/miniconda3/bin/activate ecDNA
 
@@ -64,9 +62,9 @@ refFile2="GRCh37_plus_virus.fa"
 # REF_FILE=${TOP_LEVEL_DIR}/input/references/b37.fasta
 # REF_FILE=${TOP_LEVEL_DIR}/input/references/GRCh37_plus_virus.fa
 # REF_FILE=${TOP_LEVEL_DIR}/input/references/${refFile}
-BED_FILE=${TOP_LEVEL_DIR}/input/beds/${bedName}
-ANNOTATION_FILE=${TOP_LEVEL_DIR}/input/references/refFlat_withoutPrefix.txt
-EXCLUDE_FILE=${TOP_LEVEL_DIR}/input/references/human.hg19.excl.tsv
+BED_FILE=${inputDirectory}/beds/${bedName}
+ANNOTATION_FILE=${inputDirectory}/references/refFlat_withoutPrefix.txt
+EXCLUDE_FILE=${inputDirectory}/references/human.hg19.excl.tsv
 # bedPath=$dataDir/input/beds
 
 mafFile="data_mutations_extended.txt"
@@ -79,12 +77,11 @@ NORMAL_SAMPLE_ID=${sampleID_Normal}
 echo "Normal ID = $NORMAL_SAMPLE_ID"
 
 TUMOR_PURITY=${tumor_Purity}
-# echo "Tumor Purity = $TUMOR_PURITY"
+echo "Tumor Purity = $TUMOR_PURITY"
 GENOME_VERSION=hg19
 
 
-flagDir=$dataDir/flag/${flagDirName}
-OUT_DIR=${TOP_LEVEL_DIR}/output/${outputDirName}
+OUT_DIR=${outputDir}
 outDir_Sample=${OUT_DIR}/${TUMOR_SAMPLE_ID}
 outDir_flatReference=${outDir_Sample}/flatReference
 outDir_preProcessor=${outDir_Sample}/preProcessor
@@ -117,11 +114,21 @@ if [[ ! -f $flag_done ]]; then
 
     if [[ "$seqType" == "IMPACT" ]]; then
 
-        bamFilePath_T=$(python3.8 generateBAMFilePath.py $keyFile "$bamMirrorPath" "$TUMOR_SAMPLE_ID" T)
+        cmd="python3.8 generateBAMFilePath.py \"$keyFile\" \"$bamMirrorPath\" \"$TUMOR_SAMPLE_ID\" T"
+        if ! bamFilePath_T=$(eval $cmd); then
+          echo "BAM file not found"
+          rm "$flag_inProcess" && touch "$flag_fail"
+          exit 1
+        fi
         echo "Tumor Sample BAM File = ${bamFilePath_T}"
 
         if [[ "$somaticStatus" == "Matched" ]]; then
-          bamFilePath_N=$(python3.8 generateBAMFilePath.py $keyFile "$bamMirrorPath" "$NORMAL_SAMPLE_ID" N)
+          cmd="python3.8 generateBAMFilePath.py \"$keyFile\" \"$bamMirrorPath\" \"$NORMAL_SAMPLE_ID\" N"
+          if ! bamFilePath_N=$(eval $cmd); then
+            echo "BAM file not found"
+            rm "$flag_inProcess" && touch "$flag_fail"
+            exit 1
+          fi
           echo "Normal Sample BAM File = ${bamFilePath_N}"
         fi
 
@@ -134,18 +141,21 @@ if [[ ! -f $flag_done ]]; then
         bamDir_T=$(dirname "$bamFilePath_T")
         BAMHeaderCount=$(samtools view -H "$bamFilePath_T"| grep '^@SQ' | wc -l)
         if [[ $BAMHeaderCount -gt 85 ]]; then
-          REF_FILE=${TOP_LEVEL_DIR}/input/references/${refFile2}
+          REF_FILE=${inputDirectory}/references/${refFile2}
           echo "Header Count inside BAM File=$BAMHeaderCount"
           echo "BAM file aligned with b37 + virus Reference ....."
           echo "Reference File = $REF_FILE"
         else 
-          REF_FILE=${TOP_LEVEL_DIR}/input/references/${refFile1}
+          REF_FILE=${inputDirectory}/references/${refFile1}
           echo "Header Count inside BAM File=$BAMHeaderCount"
           echo "BAM file aligned with b37 ....."
           echo "Reference File = $REF_FILE"
         fi
          
-
+    else
+        echo "BAM file not found"
+        rm "$flag_inProcess" && touch "$flag_fail"
+        exit 1
         # bamName_T=$(basename "$bamFilePath_T")
     fi
 
