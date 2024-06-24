@@ -26,7 +26,7 @@ Edit projectName to the desired project name, the dataDir to the desired data di
 
 ```
 cd scripts
-sh submit_on_cluster.sh ./global_config_bash.rc
+sh generateECHOResults.sh ./global_config_bash.rc
 ```
 
 ### Step 3: Merge ECHO Results

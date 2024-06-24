@@ -12,11 +12,8 @@ source $CONFIG_FILE
 dataDir=$dataDirectory
 manifestDir=$manifestDirectory
 inputDir=$inputDirectory
-sampleFacetsLogDir=$sampleFacetsLogDirectory
 
-mkdir -p $sampleFacetsLogDir 2>/dev/null
 mkdir -p $sampleFacetsDirectory 2>/dev/null
-mkdir -p $echoLogDirectory 2>/dev/null
 
 # Analysis type
 aType=$aType
@@ -54,26 +51,11 @@ if [[ -f "$sampleTrackerFile" ]]; then
     echo
 else 
     echo "Manifest FileA Not Found, Creating..."
-    cmd="bsub \
-        -W ${clusterTime} \
-        -n ${clusterCPUNum} \
-        -R 'rusage[mem=${clusterMemory}]' \
-        -J 'create_manifest' \
-        -o '${echoLogDirectory}/make_manifest.${ts}.stdout' \
-        -e '${echoLogDirectory}/make_manifest.${ts}.stderr' \
-        python3.8 ./cBioPortalApiPull.py /home/yuk3/cbioportal_data_access_token.txt $subsetFile $sampleTrackerFile $defaultPurity"
+    cmd="python3.8 ./cBioPortalApiPull.py /home/yuk3/cbioportal_data_access_token.txt $subsetFile $sampleTrackerFile $defaultPurity"
     echo "$cmd"
     eval $cmd
     echo
 
-    while [[ ! -f "$sampleTrackerFile" ]]; do
-        echo
-        echo "Waiting for job to finish... Feel free to quit and rerun when job is finished..."
-        bjobs
-        sleep 4
-    done
-    echo "Manifest Created, Continuing"
-    sleep 1
 fi
 
 # child directory paths
@@ -90,27 +72,13 @@ fi
 
 # Create facets sample document
 echo "Creating facets sample"
-cmd="bsub \
-      -W ${clusterTime} \
-      -n ${clusterCPUNum} \
-      -R 'rusage[mem=${clusterMemory}]' \
-      -J 'Facets_sample' \
-      -o '${sampleFacetsLogDir}/facets_sample.${ts}.stdout' \
-      -e '${sampleFacetsLogDir}/facets_sample.${ts}.stderr' \
-      python3.8 generateFacetsSampleReport.py --subsetFile $subsetFile --outputFile $sampleReportFacetsName --dataDirectory $dataDir"
+cmd="python3.8 generateFacetsSampleReport.py --subsetFile $subsetFile --outputFile $sampleReportFacetsName --dataDirectory $dataDir"
 echo "$cmd"
 eval "$cmd"
 echo
 
 # If using facets purity change
 if [[ $facetsPurity == True ]]; then
-    while [[ ! -f "$sampleReportFacetsName" ]]; do
-        echo
-        echo "Waiting for facets report... feel free to quit and rerun when job is finished..."
-        bjobs
-        sleep 4
-    done
-
     echo "Using facets purity"
     echo "New File location: ${sampleTrackerFile}.facets.tsv"
     newManifest="${sampleTrackerFile}.facets.tsv"

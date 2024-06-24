@@ -6,7 +6,7 @@
 #                                               #
 #################################################
 
-projectName="BB_EchoCaller_FullPediatric_FacetsPurity"
+projectName="BB_EchoCaller_50Pediatric"
 
 ###############
 # directories #
@@ -36,7 +36,6 @@ mergedOutputDirectory="${outputDirectory}/merged"
 
 # For facets sample calls
 sampleFacetsDirectory="${outputDirectory}/sampleFacets"
-sampleFacetsLogDirectory="${logDirectory}/sampleFacets"
 
 # For facets gene calls
 facetsOutputDirectory="${outputDirectory}/facetsCalls"
@@ -51,7 +50,7 @@ facetsFlagDirectory="${flagDirectory}/facetsCalls"
 sampleTracker="${manifestDirectory}/FileA.tsv"
 
 # Subset of samples to use
-sampleSubset="${manifestDirectory}/FileB.tsv"
+sampleSubset="${manifestDirectory}/pediatric_50.tsv"
 
 # Columns of information in the sampleTracker (0 indexed)
 sampleIDColumn=0
@@ -59,7 +58,7 @@ tumorPurityColumn=1
 somaticStatusColumn=2
 
 # True if we want to use facets purity instead of pathology (True or False)
-useFacetsPurity=True
+useFacetsPurity=False
 defaultPurity=20
 
 # Analysis type (1 or 2)
@@ -77,4 +76,4 @@ clusterCPUNum=4
 clusterMemory=64
 
 # Allotted time (format: 72:00 -> 72 hours or 72 -> 72 hours)
-clusterTime="36"
+clusterTime="72"

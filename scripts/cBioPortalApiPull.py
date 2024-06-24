@@ -36,6 +36,20 @@ if is_xlsx(fileB) :
 else :
     manifest = pd.read_csv(fileB, sep = '\t', header = None, names=['sampleId'])
 
+def isCorrectPanel(row) :
+    panelName = row['sampleId'].split('-')[3]
+    if panelName == "IM3" or panelName == "IM5" or panelName == "IM6" or panelName == "IM7" :
+        return True
+    return False
+
+# Remove samples which are not the correct impact panels
+for idx, row in manifest.iterrows() :
+    if not isCorrectPanel(row) :
+        print(f"Dropping {row['sampleId']}, Panel Incorrect")
+mask = manifest.apply(isCorrectPanel, axis = 1)
+manifest = manifest[mask]
+
+# Set up defaults
 defaultPurity = int(sys.argv[4])
 manifest['TumorPurity'] = defaultPurity
 manifest['SomaticStatus'] = 'Unmatched'
@@ -64,8 +78,7 @@ for data in all_impact :
                 manifest.loc[sample_dict[data.sampleId], "TumorPurity"] = int(data.value)
             except :
                 manifest.loc[sample_dict[data.sampleId], "SomaticStatus"] = defaultPurity
-
-
+        
 # Export
 outFile = sys.argv[3]
 if outFile.endswith('.xlsx') :
