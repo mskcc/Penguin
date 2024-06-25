@@ -58,6 +58,8 @@ else
 
 fi
 
+exit 1
+
 # child directory paths
 outputManifest="sampleManifest_${ts}_${aType}.txt"
 outputManifestPath=${manifestDir}/${outputManifest}

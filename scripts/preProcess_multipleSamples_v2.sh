@@ -17,6 +17,7 @@ shift
 i=$1;
 shift
 
+ts=$(date +%Y%m%d%H%M%S)
 
 # bamMirrorPath_impact="/juno/res/dmpcollab/dmpshare/share/irb12_245"
 bamMirrorPath_impact="/juno/dmp/share/irb12_245"

@@ -9,6 +9,8 @@ clusterCPUNum=$clusterCPUNum
 clusterMemory=$clusterMemory
 clusterTime=$clusterTime
 
+ts=$(date +%Y%m%d%H%M%S)
+
 cmd="bsub \
     -W ${clusterTime} \
     -n ${clusterCPUNum} \

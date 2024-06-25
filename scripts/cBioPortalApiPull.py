@@ -53,6 +53,8 @@ manifest = manifest[mask]
 defaultPurity = int(sys.argv[4])
 manifest['TumorPurity'] = defaultPurity
 manifest['SomaticStatus'] = 'Unmatched'
+manifest['cancerType'] = 'NA'
+manifest['cancerTypeDetailed'] = 'NA'
 
 # Set up a dictionary
 sample_dict = {}
@@ -67,6 +69,7 @@ cbioportal = SwaggerClient.from_url('https://cbioportal.mskcc.org/api/v2/api-doc
                                             "validate_swagger_spec": False}
 )
 
+# Fill in sample-wise info (Somatic status, tumor purity, cancer type, cancer type detailed)
 all_impact = cbioportal.Clinical_Data.getAllClinicalDataInStudyUsingGET(studyId = "mskimpact").result()
 
 for data in all_impact :
@@ -78,10 +81,53 @@ for data in all_impact :
                 manifest.loc[sample_dict[data.sampleId], "TumorPurity"] = int(data.value)
             except :
                 manifest.loc[sample_dict[data.sampleId], "SomaticStatus"] = defaultPurity
-        
+        if data.clinicalAttributeId == "CANCER_TYPE" :
+            manifest.loc[sample_dict[data.sampleId], "cancerType"] = data.value
+        if data.clinicalAttributeId == "CANCER_TYPE_DETAILED" :
+            manifest.loc[sample_dict[data.sampleId], "cancerTypeDetailed"] = data.value
+
+
+# Fill in patient-wise info
+all_impact_patient = cbioportal.Clinical_Data.getAllClinicalDataInStudyUsingGET(studyId = "mskimpact", clinicalDataType = 'PATIENT').result()
+
+manifest['patientId'] = manifest['sampleId'].apply(lambda x: x.split('-', 2)[0] + '-' + x.split('-', 2)[1])
+manifest['12_245_partA'] = 'NA'
+manifest['osStatus'] = 'NA'
+manifest['osMonths'] = 'NA'
+
+patient_dict = {}
+for idx, row in manifest.iterrows() :
+    if row['patientId'] in patient_dict :
+        patient_dict[row['patientId']] += ',' + str(idx)
+    else :
+        patient_dict[row['patientId']] = str(idx)
+
+
+for data in all_impact_patient :
+    if data.patientId in patient_dict :
+        if data.clinicalAttributeId == "PARTA_CONSENTED_12_245" :
+            for idx in patient_dict[data.patientId].split(',') :
+                idx = int(idx)
+                manifest.loc[idx, "12_245_partA"] = data.value
+        if data.clinicalAttributeId == "OS_MONTHS" :
+            for idx in patient_dict[data.patientId].split(',') :
+                idx = int(idx)
+                manifest.loc[idx, "osMonths"] = data.value
+        if data.clinicalAttributeId == "OS_STATUS" :
+            for idx in patient_dict[data.patientId].split(',') :
+                idx = int(idx)
+                manifest.loc[idx, "osStatus"] = data.value.split(':')[1]
+
+# Remove part A non consented
+for idx, row in manifest.iterrows() :
+    if row['12_245_partA'] == "NO" :
+        print(f"Dropping {row['sampleId']}, 12-245 Non Consent")
+
+manifest = manifest[manifest['12_245_partA'] != 'NO']
+
 # Export
 outFile = sys.argv[3]
 if outFile.endswith('.xlsx') :
     manifest.to_excel(outFile, index = False, header = False)
 else :
-    manifest.to_csv(outFile, sep = '\t', index = False, header = False)
+    manifest.to_csv(outFile, sep = '\t', index = False, header = True)

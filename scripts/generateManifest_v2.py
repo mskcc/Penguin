@@ -50,7 +50,7 @@ if analysisType == 1:
         df = pd.read_excel(sampleTrackerFilePath, engine='openpyxl')
     else :
         print("Tracker is tsv")
-        df = pd.read_csv(sampleTrackerFilePath, sep = '\t', header=None)
+        df = pd.read_csv(sampleTrackerFilePath, sep = '\t', header=None, skiprows=[0])
 
     if is_xlsx(subsetFile) :
         print("Subset is xlsx")
