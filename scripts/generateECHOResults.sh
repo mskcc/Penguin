@@ -9,6 +9,10 @@ clusterCPUNum=$clusterCPUNum
 clusterMemory=$clusterMemory
 clusterTime=$clusterTime
 
+if [[ $clusterTime != *:* ]]; then
+    clusterTime="${clusterTime}:00"
+fi
+
 ts=$(date +%Y%m%d%H%M%S)
 
 cmd="bsub \

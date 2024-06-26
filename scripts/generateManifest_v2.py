@@ -62,7 +62,7 @@ if analysisType == 1:
     listOfIDs=df_1.iloc[:,0].unique().tolist()
     df_filtered=df[df.iloc[:,sampleIDColumn].isin(listOfIDs)]
     # df_filtered_merged=pd.merge(df_filtered, df_1, left_on="DMP Sample ID", right_on="Sample ID")
-    df_filtered.to_csv(outputManifestPath, sep='\t', index=False)
+    df_filtered.to_csv(outputManifestPath, sep='\t', index=False, header = False)
     # df_filtered_merged.to_csv(outputManifestPath, sep='\t', index=False)
 
 

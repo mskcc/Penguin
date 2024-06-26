@@ -6,6 +6,14 @@ import pandas as pd
 
 # Read in token value
 tokenFile = sys.argv[1]
+# Get the list of samples
+fullFileB = sys.argv[2]
+# Three outputs
+subsetFileB = sys.argv[3]
+fullFileA = sys.argv[4]
+subsetFileA = sys.argv[5]
+defaultPurity = int(sys.argv[6])
+
 
 with open(tokenFile, 'r') as file :
     token = file.readline().strip()
@@ -16,9 +24,6 @@ http_client.set_api_key(
     'cbioportal.mskcc.org', 'Bearer ' + token,
     param_name='Authorization', param_in='header'
 )
-
-# Get the list of samples
-fileB = sys.argv[2]
 
 '''
 Checks if file is an xlsx file
@@ -31,26 +36,21 @@ def is_xlsx(file) :
         except :
             return False
 
-if is_xlsx(fileB) :
-    manifest = pd.read_excel(fileB, engine='openpyxl', header=None, names=['sampleId'])
+if is_xlsx(fullFileB) :
+    manifest = pd.read_excel(fullFileB, engine='openpyxl', header=None, names=['sampleId'])
 else :
-    manifest = pd.read_csv(fileB, sep = '\t', header = None, names=['sampleId'])
+    manifest = pd.read_csv(fullFileB, sep = '\t', header = None, names=['sampleId'])
 
+'''
+Determines if the panel used is useable for this analysis
+'''
 def isCorrectPanel(row) :
     panelName = row['sampleId'].split('-')[3]
     if panelName == "IM3" or panelName == "IM5" or panelName == "IM6" or panelName == "IM7" :
         return True
     return False
 
-# Remove samples which are not the correct impact panels
-for idx, row in manifest.iterrows() :
-    if not isCorrectPanel(row) :
-        print(f"Dropping {row['sampleId']}, Panel Incorrect")
-mask = manifest.apply(isCorrectPanel, axis = 1)
-manifest = manifest[mask]
-
 # Set up defaults
-defaultPurity = int(sys.argv[4])
 manifest['TumorPurity'] = defaultPurity
 manifest['SomaticStatus'] = 'Unmatched'
 manifest['cancerType'] = 'NA'
@@ -118,16 +118,34 @@ for data in all_impact_patient :
                 idx = int(idx)
                 manifest.loc[idx, "osStatus"] = data.value.split(':')[1]
 
+subsetManifest = manifest
+
+# Remove samples which are not the correct impact panels
+for idx, row in subsetManifest.iterrows() :
+    if not isCorrectPanel(row) :
+        print(f"Dropping {row['sampleId']}, Panel Incorrect")
+mask = subsetManifest.apply(isCorrectPanel, axis = 1)
+subsetManifest = subsetManifest[mask]
+
 # Remove part A non consented
-for idx, row in manifest.iterrows() :
+for idx, row in subsetManifest.iterrows() :
     if row['12_245_partA'] == "NO" :
         print(f"Dropping {row['sampleId']}, 12-245 Non Consent")
+subsetManifest = subsetManifest[subsetManifest['12_245_partA'] != 'NO']
 
-manifest = manifest[manifest['12_245_partA'] != 'NO']
-
-# Export
-outFile = sys.argv[3]
-if outFile.endswith('.xlsx') :
-    manifest.to_excel(outFile, index = False, header = False)
+# Export files
+if fullFileA.endswith('.xlsx') :
+    manifest.to_excel(fullFileA, index = False, header = False)
 else :
-    manifest.to_csv(outFile, sep = '\t', index = False, header = True)
+    manifest.to_csv(fullFileA, sep = '\t', index = False, header = True)
+
+if subsetFileA.endswith('.xlsx') :
+    subsetManifest.to_excel(subsetFileA, index = False, header = False)
+else :
+    subsetManifest.to_csv(subsetFileA, sep = '\t', index = False, header = True)    
+    
+samples = subsetManifest['sampleId']
+if subsetFileB.endswith('.xlsx') :
+    samples.to_excel(subsetFileB, index = False, header = False)
+else :
+    samples.to_csv(subsetFileB, sep = '\t', index = False, header = False)    

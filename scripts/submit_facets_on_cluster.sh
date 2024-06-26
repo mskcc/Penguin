@@ -20,6 +20,10 @@ mkdir -p "$flagDir" 2>/dev/null
 mkdir -p "$logDir" 2>/dev/null
 mkdir -p "$outputDir" 2>/dev/null
 
+if [[ $clusterTime != *:* ]]; then
+    clusterTime="${clusterTime}:00"
+fi
+
 #################################
 
 echoReportFile=${mergedOutputDirectory}/merged.ECHO_results.csv

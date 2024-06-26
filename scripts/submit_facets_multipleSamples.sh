@@ -18,6 +18,10 @@ echoReportFile=${mergedOutputDirectory}/merged.ECHO_results.csv
 
 ts=$(date +%Y%m%d%H%M%S)
 
+if [[ $clusterTime != *:* ]]; then
+    clusterTime="${clusterTime}:00"
+fi
+
 # Read each line of file
 while IFS=, read -r sample_id _ gene _; do
     IFS='-' read -ra parts <<< "$sample_id"

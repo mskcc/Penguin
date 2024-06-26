@@ -88,4 +88,4 @@ for index, row in facets_df.iterrows() :
     idx = (subset_fileA_df.iloc[:, IDCol] == row['ID']).idxmax()
     subset_fileA_df.at[idx, PurityCol] = row['Facets Purity']
 # Export
-subset_fileA_df.to_csv(outFile, sep='\t', index = False, header = False)
+subset_fileA_df.to_csv(outFile, sep='\t', index = False)
