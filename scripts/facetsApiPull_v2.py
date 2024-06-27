@@ -59,7 +59,7 @@ def get_selected_genes(useSingleRun, allowDefaults, target_sample_id, target_gen
                 to_write += str(cur_gene.genes_on_seg) + "\t"
                 to_write += str(cur_gene.gene_snps) + "\t"
                 to_write += str(cur_gene.gene_het_snps) + "\t"
-                to_write += str(cur_gene.spans_segs) + "\t"
+                to_write += str(cur_gene.spans_segs)
                 to_write += "\n"
 
     return to_write

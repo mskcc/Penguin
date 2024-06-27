@@ -5,22 +5,21 @@ Pipeline to Analyze ecDNA in collaboration with BoundlessBio
 
 ### Dependencies
 
-Please make sure to have the following installed in your environment:
+The environment yml file may be found in ```/scripts/envs/echo.yml```
+
+You can get all the dependencies with 
 
 ```
-facetsapi
-bravado
-xlsx2csv
-samtools
-pandas
-matplotlib.pyplot
-numpy
+conda env create --name ecDNA --file=/scripts/envs/echo.yml
+conda activate ecDNA
 ```
+
+Note: You may need to ask for permission to get facetsAPI access.
 
 ### Step 1: Configure Config File
 
 The default config file is scripts/global_config_bash.rc.
-Edit projectName to the desired project name, the dataDir to the desired data directory, and place a list of the sampleIds to run (separated by newlines) in the manifest folder (by default it is ```[dataDir]/input/manifest/[projectName]```). Edit the subset file to this path. All other paths and configurations can be changed for further customization, such as choosing to use the FACETS called tumor purity.
+Edit ```projectName``` to the desired project name, ```dataDir``` to the desired data directory, and place a list of the sampleIds to run (separated by newlines) in the manifest folder (by default it is ```[dataDir]/input/manifest/[projectName]```). Edit ```sampleFull``` to this path. All other paths and configurations can be changed for further customization, such as choosing to use the FACETS called tumor purity.
 
 ### Step 2: Run the Parallelized ECHO Caller
 
@@ -31,7 +30,7 @@ sh generateECHOResults.sh ./global_config_bash.rc
 
 ### Step 3: Merge ECHO Results
 
-Please ensure that all jobs have concluded. You can check statuses in ```[dataDir]/flag/flag_[projectName]/echoCalls```. Samples may fail if the BAM was not found or was not in the keyFile.
+Please ensure that all jobs have concluded. You can check statuses in ```[dataDir]/flag/flag_[projectName]/echoCalls```. Ensure that no samples are still running.
 
 ```
 sh merge_echo_results.sh ./global_config_bash.rc
@@ -43,7 +42,7 @@ sh merge_echo_results.sh ./global_config_bash.rc
 sh submit_facets_on_cluster.sh ./global_config_bash.rc
 ```
 
-### Step 5 (Optiona, for FACETS REport): Merge FACETS Results
+### Step 5 (Optional, for FACETS REport): Merge FACETS Results
 
 Please ensure that all jobs have concluded. You can check statuses in ```[dataDir]/flag/flag_[projectName]/facetsCalls```.
 
