@@ -14,7 +14,7 @@ conda env create --name ecDNA --file=/scripts/envs/echo.yml
 conda activate ecDNA
 ```
 
-Note: You may need to ask for permission to get facetsAPI access.
+Note: You may need to ask for permission to get facetsAPI access. Please visit https://github.com/mskcc/facetsAPI and contact Adam Price if you need access.
 
 ### Step 1: Configure Config File
 
