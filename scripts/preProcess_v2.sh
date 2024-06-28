@@ -140,6 +140,14 @@ if [[ ! -f $flag_done ]]; then
         echo "BAM File Paths exists for Tumor Sample....."
         bamDir_T=$(dirname "$bamFilePath_T")
         BAMHeaderCount=$(samtools view -H "$bamFilePath_T"| grep '^@SQ' | wc -l)
+
+        # This is a failure point
+        if [ $? -gt 0 ]; then
+            echo "samtools command failed with exit status $?"
+            rm "$flag_inProcess" && touch "$flag_fail"
+            exit 1
+        fi
+        
         if [[ $BAMHeaderCount -gt 85 ]]; then
           REF_FILE=${inputDirectory}/references/${refFile2}
           echo "Header Count inside BAM File=$BAMHeaderCount"

@@ -6,7 +6,7 @@
 #                                               #
 #################################################
 
-projectName="BB_EchoCaller_50Pediatric"
+projectName="BB_EchoCaller_Facets_Rerun_Ewing_DSRCT"
 
 ###############
 # directories #
@@ -47,7 +47,7 @@ facetsFlagDirectory="${flagDirectory}/facetsCalls"
 ###########
 
 # Subset of samples to use
-sampleFull="${manifestDirectory}/pediatric_50.tsv"
+sampleFull="${manifestDirectory}/FileB.tsv"
 
 # Files that will be created
 sampleInfoFull="${manifestDirectory}/FileA.tsv"
