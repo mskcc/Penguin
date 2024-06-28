@@ -36,8 +36,8 @@ if [ -f "$echoReportFile" ]; then
         -n ${clusterCPUNum} \
         -R 'rusage[mem=${clusterMemory}]' \
         -J 'facets_driver' \
-        -o '${logDir}/facets_api_pull_${ts}.stdout' \
-        -e '${logDir}/facets_api_pull_${ts}.stderr' \
+        -o '${logDir}/facets_multiple_call_${ts}.stdout' \
+        -e '${logDir}/facets_multiple_call_${ts}.stderr' \
         sh submit_facets_multipleSamples.sh ${CONFIG_FILE}"
     echo "$cmd"
     eval $cmd
