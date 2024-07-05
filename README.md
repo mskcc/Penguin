@@ -49,3 +49,11 @@ Please ensure that all jobs have concluded. You can check statuses in ```[dataDi
 ```
 sh merge_facets_results.sh ./global_config_bash.rc
 ```
+
+### Results
+
+The results can be found in the ```mergedOutputDirectory``` folder within the config file. This folder contains ECHO, FACETS, and pre-processing merged files.
+
+### Visualization Notebooks
+
+This pipeline offers several visualization notebooks in ```\scripts\notebooks``` to jumpstart analysis. Fill in paths/options in the settings sections.
