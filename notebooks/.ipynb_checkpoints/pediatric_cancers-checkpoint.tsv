@@ -1,0 +1,109 @@
+Alveolar Rhabdomyosarcoma	0.7592592592592593
+Ewing Sarcoma	0.550561797752809
+Ovarian Germ Cell Tumor	0.45454545454545453
+Desmoplastic Small-Round-Cell Tumor	0.5813953488372093
+Anaplastic Ependymoma	0.7894736842105263
+Embryonal Rhabdomyosarcoma	0.7857142857142857
+Rhabdomyosarcoma	0.5573770491803278
+Chondroblastic Osteosarcoma	0.5
+Clear Cell Sarcoma	0.3225806451612903
+Ependymoma	0.35294117647058826
+Sertoli-Leydig Cell Tumor	0.3333333333333333
+Neuroblastoma	0.9644859813084112
+Osteoblastic Osteosarcoma	0.6756756756756757
+Fibrolamellar Carcinoma	0.46153846153846156
+Low-Grade Fibromyxoid Sarcoma	0.4074074074074074
+Osteosarcoma	0.5565610859728507
+Wilms' Tumor	0.8636363636363636
+Pilocytic Astrocytoma	0.8305084745762712
+Hepatoblastoma	0.9375
+Renal Medullary Carcinoma	0.4166666666666667
+Mature Teratoma	0.32
+Olfactory Neuroblastoma	0.3333333333333333
+Ganglioglioma	0.5238095238095238
+Mesenchymal Chondrosarcoma	0.3333333333333333
+Extraventricular Neurocytoma	0.6666666666666666
+Adrenocortical Adenoma	0.5
+Secondary Osteosarcoma	1.0
+Ganglioneuroblastoma	0.9428571428571428
+High-Grade Neuroepithelial Tumor	0.6666666666666666
+Pleomorphic Xanthoastrocytoma	0.5714285714285714
+Cellular Schwannoma	0.375
+Immature Teratoma	0.3157894736842105
+Retinoblastoma	0.9280575539568345
+Round Cell Sarcoma, NOS	0.42105263157894735
+Myofibroma	0.6666666666666666
+Craniopharyngioma, Adamantinomatous Type	0.6666666666666666
+Anaplastic Pleomorphic Xanthoastrocytoma	0.5
+Diffuse Intrinsic Pontine Glioma	0.75
+Medulloblastoma	0.6129032258064516
+Pancreatoblastoma	0.4
+Telangiectatic Osteosarcoma	0.6666666666666666
+Ependymomal Tumor	0.4
+Desmoplastic/Nodular Medulloblastoma	0.5
+Fibrothecoma	0.6666666666666666
+Dysgerminoma	0.3888888888888889
+Pilomyxoid Astrocytoma	1.0
+Low-Grade Central Osteosarcoma	1.0
+Rhabdoid Cancer	0.8333333333333334
+Large Cell/Anaplastic Medulloblastoma	1.0
+Miscellaneous Neuroepithelial Tumor	0.6153846153846154
+Fibroblastic Osteosarcoma	1.0
+Germ Cell Tumor, Brain	0.8333333333333334
+Pineoblastoma	0.8571428571428571
+Atypical Choroid Plexus Papilloma	0.6666666666666666
+Choroid Plexus Papilloma	0.4
+Congenital Nevus	0.6666666666666666
+High-Grade Surface Osteosarcoma	1.0
+Inflammatory Myofibroblastic Bladder Tumor	1.0
+Adamantinoma	0.4
+Embryonal Tumor	1.0
+Primary Neuroepithelial Tumor	0.5
+Atypical Nevus	0.55
+Medulloepithelioma	0.75
+Low-Grade Neuroepithelial Tumor	0.6666666666666666
+Angiocentric Glioma	1.0
+Medulloblastoma, NOS	1.0
+Choroid Plexus Tumor	0.4
+Atypical Teratoid/Rhabdoid Tumor	0.8333333333333334
+Ganglioneuroma	0.9230769230769231
+Choroid Plexus Carcinoma	1.0
+Melanocytoma	0.5
+Periosteal Osteosarcoma	0.5
+Malignant Nonepithelial Tumor of the Liver	0.5
+Disseminated Juvenile Xanthogranuloma	0.6666666666666666
+Dysembryoplastic Neuroepithelial Tumor	0.6666666666666666
+Ewing Sarcoma of Soft Tissue	0.36363636363636365
+Clear Cell Sarcoma of Kidney	0.5
+Angiomatoid Fibrous Histiocytoma	0.3333333333333333
+Germinoma	0.75
+Basal Cell Adenocarcinoma	0.5
+Undifferentiated Embryonal Sarcoma of the Liver	0.6
+Pineal Tumor	1.0
+Nerve Sheath Tumor	0.4
+Chordoid Meningioma	1.0
+Malignant Teratoma	0.5
+Anaplastic Medulloblastoma, SHH Subtype	0.5
+Medulloblastoma with Extensive Nodularity	1.0
+Medulloblastoma, Group 4	0.5
+Embryonal Tumor with Abundant Neuropil and True Rosettes	1.0
+Pleuropulmonary Blastoma	1.0
+Spitzoid Melanoma	0.5
+Medulloblastoma, WNT Subtype	1.0
+Medulloblastoma, Non-WNT, Non-SHH	1.0
+Adrenal Gland	1.0
+Papillary Tumor of the Pineal Region	1.0
+Medulloblastoma, SHH Subtype	1.0
+Myeloid Neoplasms with Germ Line Predisposition	0.5714285714285714
+Posttransplant Lymphoproliferative Disorders	0.3333333333333333
+Juvenile Myelomonocytic Leukemia	1.0
+B-Lymphoblastic Leukemia/Lymphoma with t(12;21)(p13.2;q22.1); ETV6-RUNX1	0.6666666666666666
+Nodular Sclerosis Classical Hodgkin Lymphoma	0.3157894736842105
+B-Lymphoblastic Leukemia/Lymphoma with t(1;19)(q23;p13.3);TCF3-PBX1	0.5
+B-Lymphoblastic Leukemia/Lymphoma with Hyperdiploidy	0.75
+ALK Positive Large B-Cell Lymphoma	1.0
+B-Lymphoblastic Leukemia/Lymphoma with iAMP21	0.5
+Myeloid Leukemia Associated with Down Syndrome	1.0
+B-Lymphoblastic Leukemia/Lymphoma with Recurrent Genetic Abnormalities	1.0
+Pediatric-Type Follicular Lymphoma	1.0
+Lymphomatoid Papulosis	0.3333333333333333
