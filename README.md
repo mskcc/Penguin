@@ -9,14 +9,15 @@ The environment yml file for the analysis notebooks may be found in ```/envs/ecD
 You can get all the dependencies for the scripts with 
 
 ```
-conda env create --name ecDNA --file=/scripts/envs/echo.yml
+conda env create --name ecDNA --file=envs/echo.yml
 conda activate ecDNA
+pip install git+https://github.com/mskcc/facetsAPI#facetsAPI
 ```
 
 You can get all the dependencies for analysis with 
 
 ```
-conda env create --name ecDNA_analysis --file=/scripts/envs/ecDNA_analysis.yml
+conda env create --name ecDNA_analysis --file=envs/ecDNA_analysis.yml
 conda activate ecDNA_analysis
 ```
 
@@ -30,7 +31,8 @@ Edit ```projectName``` to the desired project name, ```dataDir``` to the desired
 ### Step 1: Run the Parallelized ECHO Caller
 
 ```
-sh scripts/generateECHOResults.sh ./global_config_bash.rc
+cd scripts
+sh generateECHOResults.sh ../global_config_bash.rc
 ```
 
 ### Step 2: Merge ECHO Results
@@ -38,13 +40,13 @@ sh scripts/generateECHOResults.sh ./global_config_bash.rc
 Please ensure that all jobs have concluded. You can check statuses in ```[dataDir]/flag/flag_[projectName]/echoCalls```. Ensure that no samples are still running.
 
 ```
-sh scripts/merge_echo_results.sh ./global_config_bash.rc
+sh merge_echo_results.sh ../global_config_bash.rc
 ```
 
 ### Step 3 (Optional, for FACETS Report): Run the Parallelized FACETS Caller
 
 ```
-sh scripts/ubmit_facets_on_cluster.sh ./global_config_bash.rc
+sh submit_facets_on_cluster.sh ../global_config_bash.rc
 ```
 
 ### Step 4 (Optional, for FACETS REport): Merge FACETS Results
@@ -52,7 +54,7 @@ sh scripts/ubmit_facets_on_cluster.sh ./global_config_bash.rc
 Please ensure that all jobs have concluded. You can check statuses in ```[dataDir]/flag/flag_[projectName]/facetsCalls```.
 
 ```
-sh scripts/merge_facets_results.sh ./global_config_bash.rc
+sh merge_facets_results.sh ../global_config_bash.rc
 ```
 
 ### Results
