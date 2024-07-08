@@ -56,4 +56,4 @@ The results can be found in the ```mergedOutputDirectory``` folder within the co
 
 ### Visualization Notebooks
 
-This pipeline offers several visualization notebooks in ```\scripts\notebooks``` to jumpstart analysis. Fill in paths/options in the settings sections.
+This pipeline offers several visualization notebooks in ```\scripts\notebooks``` to jumpstart analysis. Fill in paths/options in the settings sections. ```echo_visualize.ipynb``` is for general visualizations, while ```case_study.ipynb``` is for analyzing a single gene in a single cancer. Some plots require external data, or for the FACETS gene level (steps 3 & 4) to have been run.
