@@ -13,7 +13,7 @@ projectName="BB_EchoCaller_50Pediatric"
 ###############
 
 # Directory containing input folder
-dataDirectory="/juno/cmo/bergerlab/yuk3/Project_ecDNA/data"
+dataDirectory="../data"
 
 # Directory containing inputs
 inputDirectory="${dataDirectory}/input"

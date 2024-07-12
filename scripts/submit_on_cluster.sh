@@ -111,7 +111,7 @@ for i in $(cat "$outputManifestPath" | awk -F "\t" -v sampleIDColumn=$(expr $sam
     echo "Sample=$sampleID_Tumor"
     echo "$cmd"
     echo "submitting Job for Sample=$sampleID_Tumor"
-    eval "$cmd"
+    # eval "$cmd"
     echo
 
     count=$((count+1))

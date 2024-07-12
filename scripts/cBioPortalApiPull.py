@@ -55,6 +55,11 @@ manifest['TumorPurity'] = defaultPurity
 manifest['SomaticStatus'] = 'Unmatched'
 manifest['cancerType'] = 'NA'
 manifest['cancerTypeDetailed'] = 'NA'
+manifest['oncotreeCode'] = 'NA'
+manifest['msiScore'] = 'NA'
+manifest['msiType'] = 'NA'
+manifest['mutationCount'] = 'NA'
+manifest['fractionAltered'] = 'NA'
 
 # Set up a dictionary
 sample_dict = {}
@@ -85,7 +90,18 @@ for data in all_impact :
             manifest.loc[sample_dict[data.sampleId], "cancerType"] = data.value
         if data.clinicalAttributeId == "CANCER_TYPE_DETAILED" :
             manifest.loc[sample_dict[data.sampleId], "cancerTypeDetailed"] = data.value
-
+        if data.clinicalAttributeId == "FRACTION_GENOME_ALTERED" :
+            manifest.loc[sample_dict[data.sampleId], "fractionAltered"] = data.value
+        if data.clinicalAttributeId == "MSI_SCORE" :
+            manifest.loc[sample_dict[data.sampleId], "msiScore"] = data.value
+        if data.clinicalAttributeId == "MSI_TYPE" :
+            manifest.loc[sample_dict[data.sampleId], "msiType"] = data.value
+        if data.clinicalAttributeId == "MUTATION_COUNT" :
+            manifest.loc[sample_dict[data.sampleId], "mutationCount"] = data.value
+        if data.clinicalAttributeId == "FRACTION_GENOME_ALTERED" :
+            manifest.loc[sample_dict[data.sampleId], "fractionAltered"] = data.value
+        if data.clinicalAttributeId == "ONCOTREE_CODE" :
+            manifest.loc[sample_dict[data.sampleId], "oncotreeCode"] = data.value
 
 # Fill in patient-wise info
 all_impact_patient = cbioportal.Clinical_Data.getAllClinicalDataInStudyUsingGET(studyId = "mskimpact", clinicalDataType = 'PATIENT').result()
@@ -94,6 +110,9 @@ manifest['patientId'] = manifest['sampleId'].apply(lambda x: x.split('-', 2)[0] 
 manifest['12_245_partA'] = 'NA'
 manifest['osStatus'] = 'NA'
 manifest['osMonths'] = 'NA'
+manifest['deIDAge'] = 'NA'
+manifest['stageHighest'] = 'NA'
+
 
 patient_dict = {}
 for idx, row in manifest.iterrows() :
@@ -109,15 +128,23 @@ for data in all_impact_patient :
             for idx in patient_dict[data.patientId].split(',') :
                 idx = int(idx)
                 manifest.loc[idx, "12_245_partA"] = data.value
-        if data.clinicalAttributeId == "OS_MONTHS" :
+        elif data.clinicalAttributeId == "OS_MONTHS" :
             for idx in patient_dict[data.patientId].split(',') :
                 idx = int(idx)
                 manifest.loc[idx, "osMonths"] = data.value
-        if data.clinicalAttributeId == "OS_STATUS" :
+        elif data.clinicalAttributeId == "OS_STATUS" :
             for idx in patient_dict[data.patientId].split(',') :
                 idx = int(idx)
                 manifest.loc[idx, "osStatus"] = data.value.split(':')[1]
-
+        elif data.clinicalAttributeId == "STAGE_HIGHEST_RECORDED" :
+            for idx in patient_dict[data.patientId].split(',') :
+                idx = int(idx)
+                manifest.loc[idx, "stageHighest"] = data.value
+        elif data.clinicalAttributeId == "CURRENT_AGE_DEID" :
+            for idx in patient_dict[data.patientId].split(',') :
+                idx = int(idx)
+                manifest.loc[idx, "deIDAge"] = data.value
+        
 subsetManifest = manifest
 
 # Remove samples which are not the correct impact panels

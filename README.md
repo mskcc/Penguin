@@ -23,10 +23,16 @@ conda activate ecDNA_analysis
 
 Note: You may need to ask for permission to get facetsAPI access. Please visit https://github.com/mskcc/facetsAPI and contact Adam Price if you need access.
 
+### Examples
+
+You can see example inputs and outputs in ```/example```.
+
+In ```/example/output```, ```facets_cbioportal_merged.tsv``` is the facets and cBioPortal sample data, ```merged.ECHO_results.csv``` are for the ECHO caller, and ```merged.FACETS_gene_results.tsv``` are facets results for the ECHO called genes.
+
 ### Step 0: Configure Config File
 
 The default config file is scripts/global_config_bash.rc.
-Edit ```projectName``` to the desired project name, ```dataDir``` to the desired data directory, and place a list of the sampleIds to run (separated by newlines) in the manifest folder (by default it is ```[dataDir]/input/manifest/[projectName]```). Edit ```sampleFull``` to this path. All other paths and configurations can be changed for further customization, such as choosing to use the FACETS called tumor purity.
+Edit ```projectName``` to the desired project name, ```dataDir``` to the desired data directory (by default it is the one provided in the repository), and place a list of the sampleIds to run (separated by newlines) in the manifest folder (by default it is ```[dataDir]/input/manifest/[projectName]```). You can see an example list in ```/example/input```. Edit ```sampleFull``` to this path. All other paths and configurations can be changed for further customization, such as choosing to use the FACETS called tumor purity.
 
 ### Step 1: Run the Parallelized ECHO Caller
 
