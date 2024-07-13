@@ -31,6 +31,12 @@ In ```/example/output```, ```facets_cbioportal_merged.tsv``` is the facets and c
 
 ### Step 0: Configure Config File
 
+Please first run 
+
+```cp /juno/cmo/bergerlab/yuk3/Project_ecDNA/references/ /data/input/ -r```
+
+To get all of the input data.
+
 The default config file is scripts/global_config_bash.rc.
 Edit ```projectName``` to the desired project name, ```dataDir``` to the desired data directory (WARNING: use the absolute path, not relative), and place a list of the sampleIds to run (separated by newlines) in the manifest folder (by default it is ```[dataDir]/input/manifest/[projectName]```). You can see an example list in ```/example/input```. Edit ```sampleFull``` to this path. All other paths and configurations can be changed for further customization, such as choosing to use the FACETS called tumor purity.
 

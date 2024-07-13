@@ -8,8 +8,6 @@ source $CONFIG_FILE
 outputDir=$echoOutputDirectory
 flagDir=$echoFlagDirectory
 
-source /home/yuk3/miniconda3/bin/activate ecDNA
-
 set -euo pipefail
 
 module load singularity/3.7.1
@@ -63,8 +61,8 @@ refFile2="GRCh37_plus_virus.fa"
 # REF_FILE=${TOP_LEVEL_DIR}/input/references/GRCh37_plus_virus.fa
 # REF_FILE=${TOP_LEVEL_DIR}/input/references/${refFile}
 BED_FILE=${inputDirectory}/beds/${bedName}
-ANNOTATION_FILE=/juno/cmo/bergerlab/yuk3/Project_ecDNA/references/refFlat_withoutPrefix.txt
-EXCLUDE_FILE=/juno/cmo/bergerlab/yuk3/Project_ecDNA/references/human.hg19.excl.tsv
+ANNOTATION_FILE=${inputDirectory}/references/refFlat_withoutPrefix.txt
+EXCLUDE_FILE=${inputDirectory}/references/human.hg19.excl.tsv
 # bedPath=$dataDir/input/beds
 
 mafFile="data_mutations_extended.txt"
@@ -149,12 +147,12 @@ if [[ ! -f $flag_done ]]; then
         fi
         
         if [[ $BAMHeaderCount -gt 85 ]]; then
-          REF_FILE=/juno/cmo/bergerlab/yuk3/Project_ecDNA/references/${refFile2}
+          REF_FILE=${inputDirectory}/references/${refFile2}
           echo "Header Count inside BAM File=$BAMHeaderCount"
           echo "BAM file aligned with b37 + virus Reference ....."
           echo "Reference File = $REF_FILE"
         else 
-          REF_FILE=/juno/cmo/bergerlab/yuk3/Project_ecDNA/references/${refFile1}
+          REF_FILE=${inputDirectory}/references/${refFile1}
           echo "Header Count inside BAM File=$BAMHeaderCount"
           echo "BAM file aligned with b37 ....."
           echo "Reference File = $REF_FILE"
