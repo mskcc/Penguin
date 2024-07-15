@@ -2,10 +2,14 @@
 
 # config file
 CONFIG_FILE=$1
+CONFIG_FILE=$(readlink -f "$CONFIG_FILE")
+
 source $CONFIG_FILE
 
 
 dataDir=$dataDirectory
+dataDir=$(readlink -f "$dataDir")
+
 outputDir=${mergedOutputDirectory}
 mergedFile=${outputDir}/merged.ECHO_results.csv
 echoOutputDir=${echoOutputDirectory}

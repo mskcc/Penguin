@@ -2,6 +2,8 @@
 
 # config file
 CONFIG_FILE=$1
+CONFIG_FILE=$(readlink -f "$CONFIG_FILE")
+
 source $CONFIG_FILE
 
 ################################
@@ -10,6 +12,7 @@ source $CONFIG_FILE
 
 # Directories
 dataDir=$dataDirectory
+dataDir=$(readlink -f "$dataDir")
 manifestDir=$manifestDirectory
 inputDir=$inputDirectory
 

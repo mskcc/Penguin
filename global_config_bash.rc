@@ -60,7 +60,7 @@ tumorPurityColumn=1
 somaticStatusColumn=2
 
 # True if we want to use facets purity instead of pathology (True or False)
-useFacetsPurity=True
+useFacetsPurity=False
 defaultPurity=20
 
 # Analysis type (1 or 2)

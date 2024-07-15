@@ -3,9 +3,13 @@
 # Set up config file
 CONFIG_FILE=$1
 shift
+CONFIG_FILE=$(readlink -f "$CONFIG_FILE")
+
 source $CONFIG_FILE
 
 outputDir=$echoOutputDirectory
+outputDir=$(readlink -f "$outputDir")
+
 flagDir=$echoFlagDirectory
 
 set -euo pipefail
@@ -45,6 +49,7 @@ shift
 keyFile="/juno/dmp/request/12-245/key.txt"
 
 dataDir=$dataDirectory
+dataDir=$(readlink -f "$dataDir")
 
 singularity_cache=/home/sumans/.singularity/cache
 
@@ -60,6 +65,7 @@ refFile2="GRCh37_plus_virus.fa"
 # REF_FILE=${TOP_LEVEL_DIR}/input/references/b37.fasta
 # REF_FILE=${TOP_LEVEL_DIR}/input/references/GRCh37_plus_virus.fa
 # REF_FILE=${TOP_LEVEL_DIR}/input/references/${refFile}
+inputDirectory=$(readlink -f "$inputDirectory")
 BED_FILE=${inputDirectory}/beds/${bedName}
 ANNOTATION_FILE=${inputDirectory}/references/refFlat_withoutPrefix.txt
 EXCLUDE_FILE=${inputDirectory}/references/human.hg19.excl.tsv
@@ -80,6 +86,7 @@ GENOME_VERSION=hg19
 
 
 OUT_DIR=${outputDir}
+OUT_DIR=$(readlink -f "$OUT_DIR")
 outDir_Sample=${OUT_DIR}/${TUMOR_SAMPLE_ID}
 outDir_flatReference=${outDir_Sample}/flatReference
 outDir_preProcessor=${outDir_Sample}/preProcessor

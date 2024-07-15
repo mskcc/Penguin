@@ -1,6 +1,6 @@
 #!/bin/bash
 #source /home/sumans/miniconda2/bin/activate gddP2
-source /home/yuk3/miniconda3/bin/activate ecDNA
+# source /home/yuk3/miniconda3/bin/activate ecDNA
 
 
 set -euo pipefail
@@ -9,6 +9,7 @@ set -euo pipefail
 #seqType="IMPACT"
 #seqType="WES"
 CONFIG_FILE=$1
+CONFIG_FILE=$(readlink -f "$CONFIG_FILE")
 shift
 
 seqType=$1
