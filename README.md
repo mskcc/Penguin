@@ -75,6 +75,6 @@ The results can be found in the ```mergedOutputDirectory``` folder within the co
 
 ### Visualization Notebooks
 
-This pipeline offers several visualization notebooks in ```\notebooks``` to jumpstart analysis. ```echo_visualize.ipynb``` is for general visualizations, while ```case_study.ipynb``` is for analyzing a single gene in a single cancer. Some plots require external data, or for the FACETS gene level (steps 3 & 4) to have been run.
+This pipeline offers several visualization notebooks in ```\notebooks``` to jumpstart analysis. ```echo_visualize.ipynb``` is for general visualizations, while ```case_study.ipynb``` is for analyzing a single gene in a single cancer. ```treatment.ipynb``` is for analyzing a treatment for a specific gene's amplification. Some plots require external data, or for the FACETS gene level (steps 3 & 4) to have been run.
 
 To run the notebooks on Juno, first switch to the analysis environment listed in Dependencies. Run ```jupyter lab``` in the desired folder, then in a separate window run ```ssh -N -L localhost:8888:localhost:8888 [user]@terra```. Copy the link in the first notebook into a browser.
