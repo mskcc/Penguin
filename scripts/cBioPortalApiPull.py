@@ -13,6 +13,7 @@ subsetFileB = sys.argv[3]
 fullFileA = sys.argv[4]
 subsetFileA = sys.argv[5]
 defaultPurity = int(sys.argv[6])
+exclusionFile = sys.argv[7]
 
 
 with open(tokenFile, 'r') as file :
@@ -46,7 +47,7 @@ Determines if the panel used is useable for this analysis
 '''
 def isCorrectPanel(row) :
     panelName = row['sampleId'].split('-')[3]
-    if panelName == "IM3" or panelName == "IM5" or panelName == "IM6" or panelName == "IM7" :
+    if panelName == "IM3" or panelName == "IM5" or panelName == "IM6" or panelName == "IM7" or panelName == "IH3" or panelName == "IH4" :
         return True
     return False
 
@@ -147,10 +148,16 @@ for data in all_impact_patient :
         
 subsetManifest = manifest
 
+exclusion_df = pd.DataFrame(columns = ['sampleId', 'reason'])
+
 # Remove samples which are not the correct impact panels
 for idx, row in subsetManifest.iterrows() :
     if not isCorrectPanel(row) :
         print(f"Dropping {row['sampleId']}, Panel Incorrect")
+        new_row = {'sampleId' : row['sampleId'], 'reason' : "Incorrect_Panel"}
+        new_df = pd.DataFrame([new_row])
+        exclusion_df = pd.concat([new_df, exclusion_df], ignore_index = True)
+
 mask = subsetManifest.apply(isCorrectPanel, axis = 1)
 subsetManifest = subsetManifest[mask]
 
@@ -158,6 +165,9 @@ subsetManifest = subsetManifest[mask]
 for idx, row in subsetManifest.iterrows() :
     if row['12_245_partA'] == "NO" :
         print(f"Dropping {row['sampleId']}, 12-245 Non Consent")
+        new_row = {'sampleId' : row['sampleId'], 'reason' : "Incorrect_Panel"}
+        new_df = pd.DataFrame([new_row])
+        exclusion_df = pd.concat([new_df, exclusion_df], ignore_index = True)
 subsetManifest = subsetManifest[subsetManifest['12_245_partA'] != 'NO']
 
 # Export files
@@ -176,3 +186,5 @@ if subsetFileB.endswith('.xlsx') :
     samples.to_excel(subsetFileB, index = False, header = False)
 else :
     samples.to_csv(subsetFileB, sep = '\t', index = False, header = False)    
+
+exclusion_df.to_csv(exclusionFile, sep = '\t', index = False)

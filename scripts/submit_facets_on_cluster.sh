@@ -10,9 +10,10 @@ source $CONFIG_FILE
 
 # Directories
 dataDir=$dataDirectory
+dataDir=$(readlink -f "$dataDir")
 inputDir=$inputDirectory
 manifestDir=$manifestDirectory
-logDir=$facetsLogDirectory
+logDir=$logDirectory
 outputDir=$facetsOutputDirectory
 flagDir=$facetsFlagDirectory
 

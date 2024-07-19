@@ -44,7 +44,7 @@ sampleReportFacetsNameFull="${sampleFacetsDirectory}/sample_report_facets_full.t
 ts=$(date +%Y%m%d%H%M%S)
 
 echo "Creating Manifest..."
-cmd="python3.8 ./cBioPortalApiPull.py $dataAccessToken $sampleFull $sampleSubset $sampleTrackerFull $sampleTrackerFile $defaultPurity"
+cmd="python3.8 ./cBioPortalApiPull.py $dataAccessToken $sampleFull $sampleSubset $sampleTrackerFull $sampleTrackerFile $defaultPurity ${manifestDir}/exclusion_${ts}.tsv"
 echo "$cmd"
 eval $cmd
 echo

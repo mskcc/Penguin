@@ -20,8 +20,8 @@ cmd="bsub \
     -n ${clusterCPUNum} \
     -R 'rusage[mem=${clusterMemory}]' \
     -J 'call_submit_on_cluster' \
-    -o '${echoLogDirectory}/call_submit_on_cluster.${ts}.stdout' \
-    -e '${echoLogDirectory}/call_submit_on_cluster.${ts}.stderr' \
+    -o '${logDirectory}/call_submit_on_cluster.${ts}.stdout' \
+    -e '${logDirectory}/call_submit_on_cluster.${ts}.stderr' \
     sh submit_on_cluster.sh $CONFIG_FILE"
 echo "$cmd"
 eval $cmd

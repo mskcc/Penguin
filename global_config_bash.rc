@@ -6,7 +6,7 @@
 #                                               #
 #################################################
 
-projectName="BB_EchoCaller_50Pediatric"
+projectName="BB_EchoCaller_v2_50Pediatric"
 
 ###############
 # directories #
@@ -85,3 +85,28 @@ clusterTime="72"
 ####################################
 
 dataAccessToken="/home/yuk3/cbioportal_data_access_token.txt"
+
+###################
+# Reference Files #
+###################
+
+keyFile="/juno/dmp/request/12-245/key.txt"
+singularity_cache=/home/sumans/.singularity/cache
+
+image_echoPreProcessor="boundlessbio-echo-preprocessor-v2.0.4.img"
+image_echoCaller="boundlessbio-echo-caller-v2.4.0.img"
+imagePath_echoPreProcessor=${singularity_cache}/${image_echoPreProcessor}
+imagePath_echoCaller=${singularity_cache}/${image_echoCaller}
+
+inputDirectory=$(readlink -f "$inputDirectory")
+bedFolder=${inputDirectory}/beds
+ANNOTATION_FILE=${inputDirectory}/references/refFlat_withoutPrefix.txt
+EXCLUDE_FILE=${inputDirectory}/references/human.hg19.excl.tsv
+
+mafFile="data_mutations_extended.txt"
+mafPath=/work/access/production/resources/cbioportal/current/msk_solid_heme
+
+GENOME_VERSION=hg19
+
+refFile1="b37.fasta"
+refFile2="GRCh37_plus_virus.fa"

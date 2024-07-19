@@ -53,6 +53,13 @@ if [[ "$seqType" == "IMPACT" ]]; then
         bedName_impact="cv3_hg19_picard_baits_withoutHeaders.interval_list"
         # bedNameImage_impact="cv3_hg19_picard_baits_withoutHeaders.interval_list"
 
+      elif [[ "$impactPanel" == "IH4" ]]; then
+        bedName_impact="IMPACT-Heme_v4_baits_withoutHeaders.ilist"
+
+      elif [[ "$impactPanel" == "IH3" ]]; then
+        #bedName_impact="IMPACT-Heme_v2_BAITS_withoutHeaders.iList"
+        bedName_impact="IMPACT-Heme_v4_baits_withoutHeaders.ilist"
+
       fi
 
    # For Normal Paired Sample
