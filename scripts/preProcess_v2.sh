@@ -57,7 +57,7 @@ singularity_cache=$singularity_cache
 # image_echoCaller="boundlessbio-echo-caller-v2.4.0.img"
 
 imagePath_echoPreProcessor=$imagePath_echoPreProcessor
-imagePath_echoCaller=$imagePath_echoPreProcessor
+imagePath_echoCaller=$imagePath_echoCaller
 
 TOP_LEVEL_DIR=${dataDir}
 refFile1=$refFile1
