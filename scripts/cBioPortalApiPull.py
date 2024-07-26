@@ -47,7 +47,7 @@ Determines if the panel used is useable for this analysis
 '''
 def isCorrectPanel(row) :
     panelName = row['sampleId'].split('-')[3]
-    if panelName == "IM3" or panelName == "IM5" or panelName == "IM6" or panelName == "IM7" or panelName == "IH3" or panelName == "IH4" :
+    if panelName == "IM3" or panelName == "IM5" or panelName == "IM6" or panelName == "IM7" or panelName == "IH4" or panelName == "IH3" :
         return True
     return False
 

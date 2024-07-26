@@ -58,7 +58,7 @@ if [[ "$seqType" == "IMPACT" ]]; then
 
       elif [[ "$impactPanel" == "IH3" ]]; then
         #bedName_impact="IMPACT-Heme_v2_BAITS_withoutHeaders.iList"
-        bedName_impact="IMPACT-Heme_v4_baits_withoutHeaders.ilist"
+        bedName_impact="IM3_picard_baits.interval_list"
 
       fi
 
