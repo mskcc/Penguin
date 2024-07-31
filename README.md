@@ -1,5 +1,5 @@
-# ecDNA-Echo
-Pipeline to Analyze ecDNA in collaboration with BoundlessBio
+# PeNGUIN: Predicting ecDNA Novelties in Genes Using IMPACT NGS Data
+Pipeline to detect Extrachromosomal DNA (ecDNA) on MSK sequencing data
 
 ### Dependencies
 
