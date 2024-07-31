@@ -1,8 +1,16 @@
 #!/bin/bash
 
-#source /home/sumans/miniconda2/bin/activate  base && conda activate "gddP2"
+# Set up config file
+CONFIG_FILE=$1
+shift
+CONFIG_FILE=$(readlink -f "$CONFIG_FILE")
 
-source /home/sumans/miniconda2/bin/activate gddP2
+source $CONFIG_FILE
+
+outputDir=$echoOutputDirectory
+outputDir=$(readlink -f "$outputDir")
+
+flagDir=$echoFlagDirectory
 
 set -euo pipefail
 
@@ -38,32 +46,33 @@ shift
 
 
 # keyFile="/juno/res/dmpcollab/dmprequest/12-245/key.txt"
-keyFile="/juno/dmp/request/12-245/key.txt"
+keyFile=$keyFile
 
-dataDir=/juno/cmo/bergerlab/sumans/Project_BoundlessBio/data
+dataDir=$dataDirectory
+dataDir=$(readlink -f "$dataDir")
 
-singularity_cache=$HOME/.singularity/cache
+singularity_cache=$singularity_cache
 
-image_echoPreProcessor="boundlessbio-echo-preprocessor-v2.0.4.img"
-image_echoCaller="boundlessbio-echo-caller-v2.4.0.img"
+# image_echoPreProcessor="boundlessbio-echo-preprocessor-v2.0.4.img"
+# image_echoCaller="boundlessbio-echo-caller-v2.4.0.img"
 
-imagePath_echoPreProcessor=$singularity_cache/$image_echoPreProcessor
-#echo $imagePath_echoPreProcessor
-imagePath_echoCaller=$singularity_cache/$image_echoCaller
+imagePath_echoPreProcessor=$imagePath_echoPreProcessor
+imagePath_echoCaller=$imagePath_echoCaller
 
 TOP_LEVEL_DIR=${dataDir}
-refFile1="b37.fasta"
-refFile2="GRCh37_plus_virus.fa"
+refFile1=$refFile1
+refFile2=$refFile2
 # REF_FILE=${TOP_LEVEL_DIR}/input/references/b37.fasta
 # REF_FILE=${TOP_LEVEL_DIR}/input/references/GRCh37_plus_virus.fa
 # REF_FILE=${TOP_LEVEL_DIR}/input/references/${refFile}
-BED_FILE=${TOP_LEVEL_DIR}/input/beds/${bedName}
-ANNOTATION_FILE=${TOP_LEVEL_DIR}/input/references/refFlat_withoutPrefix.txt
-EXCLUDE_FILE=${TOP_LEVEL_DIR}/input/references/human.hg19.excl.tsv
+inputDirectory=$(readlink -f "$inputDirectory")
+BED_FILE=${bedFolder}/${bedName}
+ANNOTATION_FILE=$ANNOTATION_FILE
+EXCLUDE_FILE=$EXCLUDE_FILE
 # bedPath=$dataDir/input/beds
 
-mafFile="data_mutations_extended.txt"
-mafPath=/work/access/production/resources/cbioportal/current/msk_solid_heme
+mafFile=$mafFile
+mafPath=$mafPath
 
 
 TUMOR_SAMPLE_ID=${sampleID_Tumor}
@@ -72,12 +81,12 @@ NORMAL_SAMPLE_ID=${sampleID_Normal}
 echo "Normal ID = $NORMAL_SAMPLE_ID"
 
 TUMOR_PURITY=${tumor_Purity}
-# echo "Tumor Purity = $TUMOR_PURITY"
-GENOME_VERSION=hg19
+echo "Tumor Purity = $TUMOR_PURITY"
+GENOME_VERSION=$GENOME_VERSION
 
 
-flagDir=$dataDir/flag/flag_8
-OUT_DIR=${TOP_LEVEL_DIR}/output/output_8
+OUT_DIR=${outputDir}
+OUT_DIR=$(readlink -f "$OUT_DIR")
 outDir_Sample=${OUT_DIR}/${TUMOR_SAMPLE_ID}
 outDir_flatReference=${outDir_Sample}/flatReference
 outDir_preProcessor=${outDir_Sample}/preProcessor
@@ -110,33 +119,57 @@ if [[ ! -f $flag_done ]]; then
 
     if [[ "$seqType" == "IMPACT" ]]; then
 
-        bamFilePath_T=$(python3.8 generateBAMFilePath.py $keyFile "$bamMirrorPath" "$TUMOR_SAMPLE_ID" T)
+        cmd="python3.8 generateBAMFilePath.py \"$keyFile\" \"$bamMirrorPath\" \"$TUMOR_SAMPLE_ID\" T"
+        if ! bamFilePath_T=$(eval $cmd); then
+          echo "BAM file not found"
+          rm "$flag_inProcess" && touch "$flag_fail"
+          exit 1
+        fi
         echo "Tumor Sample BAM File = ${bamFilePath_T}"
 
         if [[ "$somaticStatus" == "Matched" ]]; then
-          bamFilePath_N=$(python3.8 generateBAMFilePath.py $keyFile "$bamMirrorPath" "$NORMAL_SAMPLE_ID" N)
+          cmd="python3.8 generateBAMFilePath.py \"$keyFile\" \"$bamMirrorPath\" \"$NORMAL_SAMPLE_ID\" N"
+          if ! bamFilePath_N=$(eval $cmd); then
+            echo "BAM file not found"
+            rm "$flag_inProcess" && touch "$flag_fail"
+            exit 1
+          fi
           echo "Normal Sample BAM File = ${bamFilePath_N}"
         fi
 
     fi
 
+
+
     if [[ -f ${bamFilePath_T} ]]; then
         echo "BAM File Paths exists for Tumor Sample....."
         bamDir_T=$(dirname "$bamFilePath_T")
         BAMHeaderCount=$(samtools view -H "$bamFilePath_T"| grep '^@SQ' | wc -l)
+
+        # This is a failure point
+        if [ $? -gt 0 ]; then
+            echo "samtools command failed with exit status $?"
+            rm "$flag_inProcess" && touch "$flag_fail"
+            exit 1
+        fi
+        
         if [[ $BAMHeaderCount -gt 85 ]]; then
-          REF_FILE=${TOP_LEVEL_DIR}/input/references/${refFile2}
+          REF_FILE=${inputDirectory}/references/${refFile2}
           echo "Header Count inside BAM File=$BAMHeaderCount"
           echo "BAM file aligned with b37 + virus Reference ....."
           echo "Reference File = $REF_FILE"
+          
         else 
-          REF_FILE=${TOP_LEVEL_DIR}/input/references/${refFile1}
+          REF_FILE=${inputDirectory}/references/${refFile1}
           echo "Header Count inside BAM File=$BAMHeaderCount"
           echo "BAM file aligned with b37 ....."
           echo "Reference File = $REF_FILE"
         fi
          
-
+    else
+        echo "BAM file not found"
+        rm "$flag_inProcess" && touch "$flag_fail"
+        exit 1
         # bamName_T=$(basename "$bamFilePath_T")
     fi
 
@@ -144,9 +177,12 @@ if [[ ! -f $flag_done ]]; then
         echo "BAM File Paths exists for Normal Sample....."
         bamDir_N=$(dirname "$bamFilePath_N")
         # bamName_N=$(basename "$bamFilePath_N")
-
+    
+    elif [[ "$somaticStatus" == "Matched" ]]; then
+        echo "Normal BAM file not found"
+        rm "$flag_inProcess" && touch "$flag_fail"
+        exit 1
     fi
-
 
     if [[ "$somaticStatus" == "Unmatched" ]]; then
 
@@ -200,6 +236,7 @@ if [[ ! -f $flag_done ]]; then
       echo "Running Step 2: ECHO Pre-Processor - Tumor Normal Mode ....."
       echo "$cmd"
       echo
+
       # eval $cmd
 
       if ! eval "$cmd" ; then

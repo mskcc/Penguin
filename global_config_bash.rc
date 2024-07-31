@@ -1,0 +1,112 @@
+#!/bin/bash
+
+#################################################
+#                                               #
+# Default config file for ecDNA IMPACT analysis #
+#                                               #
+#################################################
+
+projectName="BB_EchoCaller_v2_50Pediatric"
+
+###############
+# directories #
+###############
+
+# Directory containing input folder
+dataDirectory="../data"
+
+# Directory containing inputs
+inputDirectory="${dataDirectory}/input"
+
+# Manifest directory
+manifestDirectory="${inputDirectory}/manifest/${projectName}"
+
+# Output, log and flag directories
+outputDirectory="${dataDirectory}/output/output_${projectName}"
+logDirectory="${dataDirectory}/log/log_${projectName}"
+flagDirectory="${dataDirectory}/flag/flag_${projectName}"
+
+# For the initial echo calls
+echoOutputDirectory="${outputDirectory}/echoCalls"
+echoLogDirectory="${logDirectory}/echoCalls"
+echoFlagDirectory="${flagDirectory}/echoCalls"
+
+# For the merged files
+mergedOutputDirectory="${outputDirectory}/merged"
+
+# For facets sample calls
+sampleFacetsDirectory="${outputDirectory}/sampleFacets"
+
+# For facets gene calls
+facetsOutputDirectory="${outputDirectory}/facetsCalls"
+facetsLogDirectory="${logDirectory}/facetsCalls"
+facetsFlagDirectory="${flagDirectory}/facetsCalls"
+
+###########
+# samples #
+###########
+
+# Subset of samples to use
+sampleFull="${manifestDirectory}/FileB.tsv"
+
+# Files that will be created
+sampleInfoFull="${manifestDirectory}/FileA.tsv"
+sampleSubset="${manifestDirectory}/FileB_run.tsv"
+sampleInfoSubset="${manifestDirectory}/FileA_run.tsv"
+
+# Columns of information in the sampleTracker (0 indexed)
+sampleIDColumn=0
+tumorPurityColumn=1
+somaticStatusColumn=2
+
+# True if we want to use facets purity instead of pathology (True or False)
+useFacetsPurity=False
+defaultPurity=20
+
+# Analysis type (1 or 2)
+aType=1
+seqType=IMPACT
+
+###############
+# clusterInfo #
+###############
+
+# Number of CPUs
+clusterCPUNum=4
+
+# Memory per CPU
+clusterMemory=64
+
+# Allotted time (format: 72:00 -> 72 hours or 72 -> 72 hours)
+clusterTime="72"
+
+####################################
+# Access to cBioPortal Private API #
+####################################
+
+dataAccessToken="/home/yuk3/cbioportal_data_access_token.txt"
+
+###################
+# Reference Files #
+###################
+
+keyFile="/juno/dmp/request/12-245/key.txt"
+singularity_cache=/home/sumans/.singularity/cache
+
+image_echoPreProcessor="boundlessbio-echo-preprocessor-v2.0.4.img"
+image_echoCaller="boundlessbio-echo-caller-v2.4.0.img"
+imagePath_echoPreProcessor=${singularity_cache}/${image_echoPreProcessor}
+imagePath_echoCaller=${singularity_cache}/${image_echoCaller}
+
+inputDirectory=$(readlink -f "$inputDirectory")
+bedFolder=${inputDirectory}/beds
+ANNOTATION_FILE=${inputDirectory}/references/refFlat_withoutPrefix.txt
+EXCLUDE_FILE=${inputDirectory}/references/human.hg19.excl.tsv
+
+mafFile="data_mutations_extended.txt"
+mafPath=/work/access/production/resources/cbioportal/current/msk_solid_heme
+
+GENOME_VERSION=hg19
+
+refFile1="b37.fasta"
+refFile2="GRCh37_plus_virus.fa"
