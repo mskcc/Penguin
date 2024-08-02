@@ -1,5 +1,7 @@
-# PeNGUIN: Predicting ecDNA Novelties in Genes Using IMPACT NGS Data
-Pipeline to detect Extrachromosomal DNA (ecDNA) on MSK sequencing data
+# PeNGUIN
+Predicting ecDNA Novelties in Genes Using IMPACT NGS Data
+
+A Pipeline to Analyze ecDNA in collaboration with BoundlessBio
 
 ### Dependencies
 
@@ -13,7 +15,6 @@ conda env create --name ecDNA --file=envs/echo.yml
 conda activate ecDNA
 pip install git+https://github.com/mskcc/facetsAPI#facetsAPI
 ```
-TODO: add path to conda environment. May have to use pip 3 or point to your version of conda pip
 
 You can get all the dependencies for analysis with 
 
@@ -90,7 +91,17 @@ The results can be found in the ```mergedOutputDirectory``` folder within the co
 
 ### Visualization Notebooks
 
-This pipeline offers several visualization notebooks in ```\notebooks``` to jumpstart analysis. ```echo_visualize.ipynb``` is for general visualizations, while ```case_study.ipynb``` is for analyzing a single gene in a single cancer. ```treatment.ipynb``` is for analyzing a treatment for a specific gene's amplification. Some plots require external data, or for the FACETS gene level (steps 3 & 4) to have been run.
+This pipeline offers several visualization notebooks in ```\notebooks``` to jumpstart analysis. 
+
+```echo_visualize.ipynb``` is for general visualizations, analyzing ecDNA prevalence in cancer types, genes that are commonly ecDNA positive, and the effect of ecDNA on clinical factors.
+
+```diagnosis_km_curves.ipynb``` is for creating KM curves using CDSI data. Plot curves for each cancer type and analyze cox models.
+
+```case_study.ipynb``` is for analyzing a single gene in a single cancer. Plot copy number and segment length, cox models / KM curves for the specific gene, and analyze patient timelines.
+
+```treatment.ipynb``` is for analyzing a treatment for a specific gene's amplification and ecDNA positivity. Plot PFS and OS KM curves, and analyze cox models.
+
+Each notebook has a settings section that the user should edit before each run.
 
 To run the notebooks on Juno, first switch to the analysis environment listed in Dependencies. Run ```jupyter lab``` in the desired folder, then in a separate window run ```ssh -N -L localhost:8888:localhost:8888 [user]@terra```. Copy the link in the first notebook into a browser.
 
