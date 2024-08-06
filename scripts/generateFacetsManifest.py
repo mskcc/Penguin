@@ -73,19 +73,21 @@ else :
 listOfIDs=fileB_df.iloc[:,0].unique().tolist()
 subset_fileA_df=fileA_df[fileA_df.iloc[:,IDCol].isin(listOfIDs)]
 
-facets_df['Facets Purity'] = facets_df['Facets Purity'].fillna(defaultPurity/100)
+# mark the na ones
+facets_df['Facets Purity'] = facets_df['Facets Purity'].fillna(100000)
 # Convert purity
 facets_df['Facets Purity'] = (facets_df['Facets Purity'] * 100).apply(lambda x: math.ceil(x)).astype(int)
 
 # Check facets complete
 if len(subset_fileA_df) != len(facets_df) :
-    print("WARNING: Facets not complete, using default where incomplete")
+    print("WARNING: Facets not complete, using pediatric where incomplete")
 
-# replace
-subset_fileA_df.iloc[:, PurityCol] = defaultPurity
 
 for index, row in facets_df.iterrows() :
     idx = (subset_fileA_df.iloc[:, IDCol] == row['ID']).idxmax()
-    subset_fileA_df.at[idx, PurityCol] = row['Facets Purity']
+    # Only change the non-na ones
+    if row['Facets Purity'] < 105 :
+        subset_fileA_df.at[idx, PurityCol] = row['Facets Purity']
+
 # Export
 subset_fileA_df.to_csv(outFile, sep='\t', index = False)

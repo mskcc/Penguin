@@ -60,7 +60,9 @@ manifest['oncotreeCode'] = 'NA'
 manifest['msiScore'] = 'NA'
 manifest['msiType'] = 'NA'
 manifest['mutationCount'] = 'NA'
+manifest['tumorBurdenScore'] = 'NA'
 manifest['fractionAltered'] = 'NA'
+manifest['sampleType'] = 'NA'
 
 # Set up a dictionary
 sample_dict = {}
@@ -103,6 +105,10 @@ for data in all_impact :
             manifest.loc[sample_dict[data.sampleId], "fractionAltered"] = data.value
         if data.clinicalAttributeId == "ONCOTREE_CODE" :
             manifest.loc[sample_dict[data.sampleId], "oncotreeCode"] = data.value
+        if data.clinicalAttributeId == "SAMPLE_TYPE" :
+            manifest.loc[sample_dict[data.sampleId], "sampleType"] = data.value
+        if data.clinicalAttributeId == "CVR_TMB_SCORE" :
+            manifest.loc[sample_dict[data.sampleId], "tumorBurdenScore"] = data.value
 
 # Fill in patient-wise info
 all_impact_patient = cbioportal.Clinical_Data.getAllClinicalDataInStudyUsingGET(studyId = "mskimpact", clinicalDataType = 'PATIENT').result()
