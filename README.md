@@ -99,11 +99,11 @@ This pipeline offers several visualization notebooks in ```\notebooks``` to jump
 
 ```case_study.ipynb``` is for analyzing a single gene in a single cancer. Plot copy number and segment length, cox models / KM curves for the specific gene, and analyze patient timelines.
 
-```treatment.ipynb``` is for analyzing a treatment for a specific gene's amplification and ecDNA positivity. Plot PFS and OS KM curves, and analyze cox models.
+```treatment.ipynb``` is for analyzing a treatment for a specific gene's amplification and ecDNA positivity. Plot PFS and OS KM curves, and analyze cox models. 
 
 Each notebook has a settings section that the user should edit before each run.
 
-To run the notebooks on Juno, first switch to the analysis environment listed in Dependencies. Run ```jupyter lab``` in the desired folder, then in a separate window run ```ssh -N -L localhost:8888:localhost:8888 [user]@terra```. Copy the link in the first notebook into a browser.
+To run the notebooks on Juno, first switch to the analysis environment listed in Dependencies. Run ```jupyter lab``` in the ```\notebooks``` folder. You should get a link like ```http://localhost:[NUM]/lab?token=[TOKEN]``` then in a separate window run ```ssh -N -L [NUM]:localhost:[NUM] [user]@terra```. Copy the link to a browser, and edit settings in each notebook before running.
 
 ### Helpful Links
 
