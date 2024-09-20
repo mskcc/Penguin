@@ -117,4 +117,15 @@ To run the notebooks on Juno, first switch to the analysis environment listed in
 
 ### Troubleshooting
 
-You can find log files in the log directory, by default ```[dataDir]/log/log_[projectName]```. In the main directory, ```call_submit_on_cluster...``` has information on the call to submit each ECHO job. The ```echoCalls``` folder contains log files for each ECHO call. ```facets_multiple_call...``` has information on the call to submit each FACETS job. the ```facetsCalls``` folder contains log files for each FACETS gene level call. The end of each file is a date timestamp to allow for troubleshooting across multiple different runs. 
+- You can find log files in the log directory, by default ```[dataDir]/log/log_[projectName]```. In the main directory, ```call_submit_on_cluster...``` has information on the call to submit each ECHO job. The ```echoCalls``` folder contains log files for each ECHO call. ```facets_multiple_call...``` has information on the call to submit each FACETS job. the ```facetsCalls``` folder contains log files for each FACETS gene level call. The end of each file is a date timestamp to allow for troubleshooting across multiple different runs.
+
+- To Pull & Build singularity image on HPC:
+    ```
+    export singularity_cache=$HOME/.singularity/cache
+
+    echo $singularity_cache
+
+    singularity build --docker-login ${singularity_cache}/boundlessbio-echo-preprocessor-release-v2.3.1.img docker://boundlessbio/echo-prep
+
+    singularity build --docker-login ${singularity_cache}/boundlessbio-ecs-v2.0.0.img  docker://boundlessbio/ecs:release-v2.0.0
+    ```
