@@ -129,3 +129,9 @@ To run the notebooks on Juno, first switch to the analysis environment listed in
 
     singularity build --docker-login ${singularity_cache}/boundlessbio-ecs-v2.0.0.img  docker://boundlessbio/ecs:release-v2.0.0
     ```
+
+- To remove chr Prefix from one of the reference files:
+
+    ```
+    sed 's/^chr//' hg19-blacklist.v2.bed > hg19-blacklist.v2_withoutPrefix.bed
+    ```
