@@ -18,6 +18,8 @@ shift
 i=$1;
 shift
 
+source $CONFIG_FILE
+
 ts=$(date +%Y%m%d%H%M%S)
 
 # bamMirrorPath_impact="/juno/res/dmpcollab/dmpshare/share/irb12_245"

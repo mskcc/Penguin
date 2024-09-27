@@ -198,7 +198,7 @@ if [[ ! -f $flag_done ]]; then
     if [[ ! -f ${outFile_flatRef_1} ]] || [[ ! -f ${outFile_flatRef_2} ]] || [[ ! -f ${outFile_flatRef_3} ]]; then
 
       cmd="singularity run \
-        --bind ${TOP_LEVEL_DIR}:${TOP_LEVEL_DIR} \
+        --bind ${TOP_LEVEL_DIR}:${TOP_LEVEL_DIR},${bamDir_N}:${bamDir_N} \
         ${imagePath_echoPreProcessor} \
         reference \
         --out_dir ${outDir_flatReference} \
