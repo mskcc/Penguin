@@ -6,7 +6,7 @@
 #                                               #
 #################################################
 
-projectName="BB_EchoCaller_v2_50Pediatric"
+projectName="ECS_Integration_Tests"
 
 ###############
 # directories #
@@ -60,7 +60,7 @@ tumorPurityColumn=1
 somaticStatusColumn=2
 
 # True if we want to use facets purity instead of pathology (True or False)
-useFacetsPurity=False
+useFacetsPurity=True
 defaultPurity=20
 
 # Analysis type (1 or 2)
@@ -90,18 +90,22 @@ dataAccessToken="/home/yuk3/cbioportal_data_access_token.txt"
 # Reference Files #
 ###################
 
+bamMirrorPath_impact="/juno/dmp/share/irb12_245"
 keyFile="/juno/dmp/request/12-245/key.txt"
 singularity_cache=/home/sumans/.singularity/cache
 
-image_echoPreProcessor="boundlessbio-echo-preprocessor-v2.0.4.img"
-image_echoCaller="boundlessbio-echo-caller-v2.4.0.img"
+# image_echoPreProcessor="boundlessbio-echo-preprocessor-v2.0.4.img"
+# image_echoCaller="boundlessbio-echo-caller-v2.4.0.img"
+image_echoPreProcessor="boundlessbio-echo-preprocessor-release-v2.3.1.img"
+image_echoCaller="boundlessbio-ecs-v2.0.0.img"
 imagePath_echoPreProcessor=${singularity_cache}/${image_echoPreProcessor}
 imagePath_echoCaller=${singularity_cache}/${image_echoCaller}
 
 inputDirectory=$(readlink -f "$inputDirectory")
-bedFolder=${inputDirectory}/beds
-ANNOTATION_FILE=${inputDirectory}/references/refFlat_withoutPrefix.txt
-EXCLUDE_FILE=${inputDirectory}/references/human.hg19.excl.tsv
+referenceDirectory=${inputDirectory}/references
+ANNOTATION_FILE=${referenceDirectory}/refFlat_withoutPrefix.txt
+EXCLUDE_FILE=${referenceDirectory}/human.hg19.excl.tsv
+ENCODE_EXCLUDE_FILE=${referenceDirectory}/hg19-blacklist.v2_withoutPrefix.bed
 
 mafFile="data_mutations_extended.txt"
 mafPath=/work/access/production/resources/cbioportal/current/msk_solid_heme
@@ -110,3 +114,13 @@ GENOME_VERSION=hg19
 
 refFile1="b37.fasta"
 refFile2="GRCh37_plus_virus.fa"
+
+bedFolder=${inputDirectory}/beds
+bedName_impact_IM7="IMPACT505_picard_baits-1.interval_list"
+bedName_impact_IM6="IMPACT468_picard_baits.interval_list"
+bedName_impact_IM5="cv5_picard_baits_withoutHeaders.interval_list"
+bedName_impact_IM3="cv3_hg19_picard_baits_withoutHeaders.interval_list"
+bedName_impact_IH4="IMPACT-Heme_v4_baits_withoutHeaders.ilist"
+bedName_impact_IH3="IM3_picard_baits.interval_list"
+
+

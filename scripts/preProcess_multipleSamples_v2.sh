@@ -21,11 +21,11 @@ shift
 ts=$(date +%Y%m%d%H%M%S)
 
 # bamMirrorPath_impact="/juno/res/dmpcollab/dmpshare/share/irb12_245"
-bamMirrorPath_impact="/juno/dmp/share/irb12_245"
-bamMirrorPath_wes="/juno/work/tempo/wes_repo/Results/v1.4.x/cohort_level/MSKWESRP"
+bamMirrorPath_impact=$bamMirrorPath_impact
+# bamMirrorPath_wes="/juno/work/tempo/wes_repo/Results/v1.4.x/cohort_level/MSKWESRP"
 
-bedName_wes="xgen-exome-research-panel-v2-targets-hg19-no-chr.bed"
-bedNameImage_wes="xgen-exome-research-panel-v2-targets-hg19-no-chr.bed"
+# bedName_wes="xgen-exome-research-panel-v2-targets-hg19-no-chr.bed"
+# bedNameImage_wes="xgen-exome-research-panel-v2-targets-hg19-no-chr.bed"
 
 if [[ "$seqType" == "IMPACT" ]]; then
 
@@ -38,27 +38,27 @@ if [[ "$seqType" == "IMPACT" ]]; then
       
 
       if [[ "$impactPanel" == "IM7" ]]; then
-        bedName_impact="IMPACT505_picard_baits-1.interval_list"
+        bedName_impact=$bedName_impact_IM7
         # bedNameImage_impact="IMPACT505_picard_baits.bed"
 
       elif [[ "$impactPanel" == "IM6" ]]; then
-        bedName_impact="IMPACT468_picard_baits.interval_list"
+        bedName_impact=$bedName_impact_IM6
         # bedNameImage_impact="IMPACT468_picard_baits.interval_list"
 
       elif [[ "$impactPanel" == "IM5" ]]; then
-        bedName_impact="cv5_picard_baits_withoutHeaders.interval_list"
+        bedName_impact=$bedName_impact_IM5
         # bedNameImage_impact="cv5_picard_baits_withoutHeaders.interval_list"
 
       elif [[ "$impactPanel" == "IM3" ]]; then
-        bedName_impact="cv3_hg19_picard_baits_withoutHeaders.interval_list"
+        bedName_impact=$bedName_impact_IM3
         # bedNameImage_impact="cv3_hg19_picard_baits_withoutHeaders.interval_list"
 
       elif [[ "$impactPanel" == "IH4" ]]; then
-        bedName_impact="IMPACT-Heme_v4_baits_withoutHeaders.ilist"
+        bedName_impact=$bedName_impact_IH4
 
       elif [[ "$impactPanel" == "IH3" ]]; then
         #bedName_impact="IMPACT-Heme_v2_BAITS_withoutHeaders.iList"
-        bedName_impact="IM3_picard_baits.interval_list"
+        bedName_impact=$bedName_impact_IH3
 
       fi
 
@@ -73,7 +73,7 @@ if [[ "$seqType" == "IMPACT" ]]; then
       echo
       date
 
-      cmd="sh preProcess_v2.sh \
+      cmd="sh call_ecDNA_ECS.sh \
       $CONFIG_FILE \
       $bamMirrorPath_impact \
       $sampleID_Tumor \
