@@ -95,9 +95,9 @@ outDir_echoCaller=${outDir_Sample}/echoCaller
 # echo "$outDir_echoCaller"
 
 bedPrefix=$(echo "$bedName" | cut -d"." -f1)
-outFile_flatRef_1=${outDir_flatReference}/${bedPrefix}.antitarget.bed
-outFile_flatRef_2=${outDir_flatReference}/${bedPrefix}.flat.reference.cnn
-outFile_flatRef_3=${outDir_flatReference}/${bedPrefix}.target.bed
+outFile_flatRef_1=${outDir_flatReference}/ECS_${bedPrefix}.large.antitarget.bed
+outFile_flatRef_2=${outDir_flatReference}/ECS_${bedPrefix}_pon_large.reference.cnn
+outFile_flatRef_3=${outDir_flatReference}/ECS_${bedPrefix}.large.target.bed
 
 mkdir -p "$flagDir" 2>/dev/null
 
@@ -198,7 +198,7 @@ if [[ ! -f $flag_done ]]; then
     if [[ ! -f ${outFile_flatRef_1} ]] || [[ ! -f ${outFile_flatRef_2} ]] || [[ ! -f ${outFile_flatRef_3} ]]; then
 
       cmd="singularity run \
-        --bind ${TOP_LEVEL_DIR}:${TOP_LEVEL_DIR},${bamDir_N}:${bamDir_N} \
+        --bind ${TOP_LEVEL_DIR}:${TOP_LEVEL_DIR},${bamDir_N}:${bamDir_N},${referenceDirectory}:${referenceDirectory} \
         ${imagePath_echoPreProcessor} \
         reference \
         --out_dir ${outDir_flatReference} \
@@ -227,9 +227,9 @@ if [[ ! -f $flag_done ]]; then
 
 
   cmd="singularity run \
-    --bind ${TOP_LEVEL_DIR}:${TOP_LEVEL_DIR},${bamDir_T}:${bamDir_T},${outDir_flatReference}:${outDir_flatReference},${mafPath}:${mafPath} \
+    --bind ${TOP_LEVEL_DIR}:${TOP_LEVEL_DIR},${bamDir_T}:${bamDir_T},${outDir_flatReference}:${outDir_flatReference},${mafPath}:${mafPath},${referenceDirectory}:${referenceDirectory} \
     ${imagePath_echoPreProcessor} \
-    preprocess \
+    preprocessor \
     --out_dir ${outDir_preProcessor} \
     --ref_fasta ${REF_FILE} \
     --ref_genome ${GENOME_VERSION} \
@@ -256,7 +256,7 @@ if [[ ! -f $flag_done ]]; then
 
 
   cmd="singularity run \
-    --bind ${TOP_LEVEL_DIR}:${TOP_LEVEL_DIR},${outDir_preProcessor}:${outDir_preProcessor},${outDir_echoCaller}:${outDir_echoCaller} \
+    --bind ${TOP_LEVEL_DIR}:${TOP_LEVEL_DIR},${outDir_preProcessor}:${outDir_preProcessor},${outDir_echoCaller}:${outDir_echoCaller},${referenceDirectory}:${referenceDirectory} \
     ${imagePath_echoCaller} \
     --inputs ${outDir_preProcessor} \
     --sample_id ${TUMOR_SAMPLE_ID} \

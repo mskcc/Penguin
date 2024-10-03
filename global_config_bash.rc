@@ -102,7 +102,7 @@ imagePath_echoPreProcessor=${singularity_cache}/${image_echoPreProcessor}
 imagePath_echoCaller=${singularity_cache}/${image_echoCaller}
 
 inputDirectory=$(readlink -f "$inputDirectory")
-referenceDirectory=${inputDirectory}/references
+referenceDirectory=/juno/cmo/bergerlab/sumans/Project_ecDNA/Production/references
 ANNOTATION_FILE=${referenceDirectory}/refFlat_withoutPrefix.txt
 EXCLUDE_FILE=${referenceDirectory}/human.hg19.excl.tsv
 ENCODE_EXCLUDE_FILE=${referenceDirectory}/hg19-blacklist.v2_withoutPrefix.bed
@@ -112,10 +112,10 @@ mafPath=/work/access/production/resources/cbioportal/current/msk_solid_heme
 
 GENOME_VERSION=hg19
 
-refFile1="b37.fasta"
-refFile2="GRCh37_plus_virus.fa"
+refFile1="hg19/Homo_sapiens_assembly19.fasta"
+refFile2="hg19_virus/hg19_virus.fa"
 
-bedFolder=${inputDirectory}/beds
+bedFolder=${referenceDirectory}/beds
 bedName_impact_IM7="IMPACT505_picard_baits-1.interval_list"
 bedName_impact_IM6="IMPACT468_picard_baits.interval_list"
 bedName_impact_IM5="cv5_picard_baits_withoutHeaders.interval_list"
