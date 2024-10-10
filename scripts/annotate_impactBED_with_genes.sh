@@ -50,7 +50,7 @@ for interval_file in "${interval_files_list[@]}"; do
     # bedtools closest -a "$OUTPUT_DIR/${file_prefix}_sorted_bed.bed" -b "$OUTPUT_DIR/refFlat_sorted_bed.bed" -d > "$OUTPUT_DIR/${file_prefix}_sorted_closest_bed.bed"
 
     # Step 5: Use awk to ensure only one row per interval (even if multiple overlaps)
-    awk '!seen[$1,$2,$3]++' "$OUTPUT_DIR/${file_prefix}_annotated_bed.bed" > "$OUTPUT_DIR/${file_prefix}_annotated_unique_bed.bed"
+    awk '!seen[$1,$2,$3,$8]++' "$OUTPUT_DIR/${file_prefix}_annotated_bed.bed" > "$OUTPUT_DIR/${file_prefix}_annotated_unique_bed.bed"
 
     # Step 6: Clean up the annotated file to keep only the desired columns (optional) and save in the output directory
     # awk 'BEGIN{OFS="\t"} {print $1, $2, $3, $8, $4}' "$OUTPUT_DIR/${file_prefix}_annotated_unique_bed.bed" > "$OUTPUT_DIR/${file_prefix}_final_bed.bed"
