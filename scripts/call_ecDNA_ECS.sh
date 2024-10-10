@@ -260,7 +260,7 @@ if [[ ! -f $flag_done ]]; then
     ${imagePath_echoCaller} \
     --inputs ${outDir_preProcessor} \
     --sample_id ${TUMOR_SAMPLE_ID} \
-    --target_bed ${BED_FILE}
+    --target_bed ${BED_FILE} \
     --output_folder ${outDir_echoCaller} \
     --ref_genome ${GENOME_VERSION}"
 
