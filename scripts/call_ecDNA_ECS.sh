@@ -29,7 +29,7 @@ sampleID_Normal=$1
 #sampleID="P-0066791-T02-IM7"
 shift
 
-bedName=$1
+BED_FILE=$1
 shift
 
 seqType=$1
@@ -39,6 +39,9 @@ tumor_Purity=$1
 shift
 
 somaticStatus=$1
+shift
+
+normalSample_pon=$1
 shift
 
 # refFile=$1
@@ -66,7 +69,7 @@ TOP_LEVEL_DIR=${dataDir}
 # REF_FILE=${TOP_LEVEL_DIR}/input/references/GRCh37_plus_virus.fa
 # REF_FILE=${TOP_LEVEL_DIR}/input/references/${refFile}
 inputDirectory=$(readlink -f "$inputDirectory")
-BED_FILE=${bedFolder}/${bedName}
+# BED_FILE=${bedFolder}/${bedName}
 # ANNOTATION_FILE=$ANNOTATION_FILE
 # EXCLUDE_FILE=$EXCLUDE_FILE
 # ENCODE_EXCLUDE_FILE=$ENCODE_EXCLUDE_FILE
@@ -94,7 +97,7 @@ outDir_preProcessor=${outDir_Sample}/preProcessor
 outDir_echoCaller=${outDir_Sample}/echoCaller
 # echo "$outDir_echoCaller"
 
-bedPrefix=$(echo "$bedName" | cut -d"." -f1)
+bedPrefix=$(basename "$BED_FILE" .bed)
 outFile_flatRef_1=${outDir_flatReference}/ECS_${bedPrefix}.large.antitarget.bed
 outFile_flatRef_2=${outDir_flatReference}/ECS_${bedPrefix}_pon_large.reference.cnn
 outFile_flatRef_3=${outDir_flatReference}/ECS_${bedPrefix}.large.target.bed
@@ -130,17 +133,20 @@ if [[ ! -f $flag_done ]]; then
 
         if [[ "$somaticStatus" == "Matched" ]]; then
           cmd="python3.8 generateBAMFilePath.py \"$keyFile\" \"$bamMirrorPath\" \"$NORMAL_SAMPLE_ID\" N"
-          if ! bamFilePath_N=$(eval $cmd); then
-            echo "BAM file not found"
-            rm "$flag_inProcess" && touch "$flag_fail"
-            exit 1
-          fi
-          echo "Normal Sample BAM File = ${bamFilePath_N}"
+        else
+          cmd="python3.8 generateBAMFilePath.py \"$keyFile\" \"$bamMirrorPath\" \"$normalSample_pon\" N"
         fi
 
+        if ! bamFilePath_N=$(eval $cmd); then
+          echo "BAM file not found"
+          rm "$flag_inProcess" && touch "$flag_fail"
+          exit 1
+        else
+          echo "Normal Sample BAM File = ${bamFilePath_N}"
+        fi
+        
+
     fi
-
-
 
     if [[ -f ${bamFilePath_T} ]]; then
         echo "BAM File Paths exists for Tumor Sample....."
@@ -155,35 +161,67 @@ if [[ ! -f $flag_done ]]; then
         fi
         
         if [[ $BAMHeaderCount -gt 85 ]]; then
-          REF_FILE=${referenceDirectory}/${refFile2}
-          echo "Header Count inside BAM File=$BAMHeaderCount"
-          echo "BAM file aligned with b37 + virus Reference ....."
-          echo "Reference File = $REF_FILE"
+          REF_FILE_T=${referenceDirectory}/${refFile2}
+          echo "Header Count inside Tumor BAM File=$BAMHeaderCount"
+          echo "Tumor BAM file aligned with b37 + virus Reference ....."
+          echo "Reference File for Tumor Sample = $REF_FILE_T"
           
         else 
-          REF_FILE=${referenceDirectory}/${refFile1}
-          echo "Header Count inside BAM File=$BAMHeaderCount"
-          echo "BAM file aligned with b37 ....."
-          echo "Reference File = $REF_FILE"
+          REF_FILE_T=${referenceDirectory}/${refFile1}
+          echo "Header Count inside Tumor BAM File=$BAMHeaderCount"
+          echo "Tumor BAM file aligned with b37 ....."
+          echo "Reference File for Tumor Sample = $REF_FILE_T"
         fi
          
     else
-        echo "BAM file not found"
+        echo "Tumor BAM file not found"
         rm "$flag_inProcess" && touch "$flag_fail"
         exit 1
         # bamName_T=$(basename "$bamFilePath_T")
     fi
 
-    if [[ "$somaticStatus" == "Matched" ]] && [[ -f ${bamFilePath_N} ]]; then
+    if [[ -f ${bamFilePath_N} ]]; then
         echo "BAM File Paths exists for Normal Sample....."
         bamDir_N=$(dirname "$bamFilePath_N")
-        # bamName_N=$(basename "$bamFilePath_N")
-    
-    elif [[ "$somaticStatus" == "Matched" ]]; then
+        BAMHeaderCount=$(samtools view -H "$bamFilePath_N"| grep '^@SQ' | wc -l)
+
+        # This is a failure point
+        if [ $? -gt 0 ]; then
+            echo "samtools command failed with exit status $?"
+            rm "$flag_inProcess" && touch "$flag_fail"
+            exit 1
+        fi
+        
+        if [[ $BAMHeaderCount -gt 85 ]]; then
+          REF_FILE_N=${referenceDirectory}/${refFile2}
+          echo "Header Count inside Normal BAM File=$BAMHeaderCount"
+          echo "Normal BAM file aligned with b37 + virus Reference ....."
+          echo "Reference File for Normal Sample = $REF_FILE_N"
+          
+        else 
+          REF_FILE_N=${referenceDirectory}/${refFile1}
+          echo "Header Count inside Normal BAM File=$BAMHeaderCount"
+          echo "Normal BAM file aligned with b37 ....."
+          echo "Reference File for Normal Sample = $REF_FILE_N"
+        fi
+         
+    else
         echo "Normal BAM file not found"
         rm "$flag_inProcess" && touch "$flag_fail"
         exit 1
+        # bamName_T=$(basename "$bamFilePath_T")
     fi
+
+    # if [[ "$somaticStatus" == "Matched" ]] && [[ -f ${bamFilePath_N} ]]; then
+    #     echo "BAM File Paths exists for Normal Sample....."
+    #     bamDir_N=$(dirname "$bamFilePath_N")
+    #     # bamName_N=$(basename "$bamFilePath_N")
+    
+    # elif [[ "$somaticStatus" == "Matched" ]]; then
+    #     echo "Normal BAM file not found"
+    #     rm "$flag_inProcess" && touch "$flag_fail"
+    #     exit 1
+    # fi
 
     if [[ "$somaticStatus" == "Matched" ]]; then
 
@@ -202,7 +240,7 @@ if [[ ! -f $flag_done ]]; then
         ${imagePath_echoPreProcessor} \
         reference \
         --out_dir ${outDir_flatReference} \
-        --ref_fasta ${REF_FILE} \
+        --ref_fasta ${REF_FILE_N} \
         --target_bed ${BED_FILE} \
         --annot_file ${ANNOTATION_FILE} \
         --pon ${PON_BAMS_LIST} \
@@ -231,7 +269,7 @@ if [[ ! -f $flag_done ]]; then
     ${imagePath_echoPreProcessor} \
     preprocessor \
     --out_dir ${outDir_preProcessor} \
-    --ref_fasta ${REF_FILE} \
+    --ref_fasta ${REF_FILE_T} \
     --ref_genome ${GENOME_VERSION} \
     --target_bed ${BED_FILE} \
     --annot_file ${ANNOTATION_FILE} \

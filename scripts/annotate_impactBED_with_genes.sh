@@ -15,9 +15,10 @@ FINAL_DIR="/juno/cmo/bergerlab/sumans/Project_ecDNA/Production/references/beds/f
 
 # Create the output directory if it doesn't exist
 mkdir -p "$OUTPUT_DIR"
+mkdir -p "$FINAL_DIR"
 
 # List of interval files (each file should be relative to INTERVAL_DIR)
-interval_files_list=("cv3_hg19_picard_baits_withoutHeaders.interval_list" "cv5_picard_baits_withoutHeaders.interval_list" "IMPACT468_picard_baits.interval_list" "IMPACT505_picard_baits-1.interval_list")  # Replace with your list of files
+interval_files_list=("cv3_hg19_picard_baits_withoutHeaders.interval_list" "cv5_picard_baits_withoutHeaders.interval_list" "IMPACT468_picard_baits.interval_list" "IMPACT505_picard_baits-1.interval_list" "IMPACT-Heme_v2_BAITS_withoutHeaders.iList" "IMPACT-Heme_v4_baits_withoutHeaders.ilist")  # Replace with your list of files
 
 # Loop through each file in the list
 for interval_file in "${interval_files_list[@]}"; do
@@ -44,18 +45,16 @@ for interval_file in "${interval_files_list[@]}"; do
 
     # Step 4: Annotate the sorted BED file with gene names from the sorted refFlat and save in the output directory
     # bedtools intersect -a "$OUTPUT_DIR/${file_prefix}_sorted_bed.bed" -b "$OUTPUT_DIR/refFlat_sorted_bed.bed" -wa -wb -c > "$OUTPUT_DIR/${file_prefix}_counts_bed.bed"
-
-    #  bedtools intersect -a "$OUTPUT_DIR/${file_prefix}_sorted_bed.bed" -b "$OUTPUT_DIR/refFlat_sorted_bed.bed" -wa -wb | awk '!seen[$1,$2,$3]++' > "$OUTPUT_DIR/${file_prefix}_annotated_unique_bed.bed"
-
-       bedtools intersect -a "$OUTPUT_DIR/${file_prefix}_sorted_bed.bed" -b "$OUTPUT_DIR/refFlat_sorted_bed.bed" -wa -wb -loj > "$OUTPUT_DIR/${file_prefix}_annotated_bed.bed"
+    # bedtools intersect -a "$OUTPUT_DIR/${file_prefix}_sorted_bed.bed" -b "$OUTPUT_DIR/refFlat_sorted_bed.bed" -wa -wb | awk '!seen[$1,$2,$3]++' > "$OUTPUT_DIR/${file_prefix}_annotated_unique_bed.bed"
+    bedtools intersect -a "$OUTPUT_DIR/${file_prefix}_sorted_bed.bed" -b "$OUTPUT_DIR/refFlat_sorted_bed.bed" -wa -wb -loj > "$OUTPUT_DIR/${file_prefix}_annotated_bed.bed"
     # bedtools closest -a "$OUTPUT_DIR/${file_prefix}_sorted_bed.bed" -b "$OUTPUT_DIR/refFlat_sorted_bed.bed" -d > "$OUTPUT_DIR/${file_prefix}_sorted_closest_bed.bed"
 
-     # Step 5: Use awk to ensure only one row per interval (even if multiple overlaps)
+    # Step 5: Use awk to ensure only one row per interval (even if multiple overlaps)
     awk '!seen[$1,$2,$3]++' "$OUTPUT_DIR/${file_prefix}_annotated_bed.bed" > "$OUTPUT_DIR/${file_prefix}_annotated_unique_bed.bed"
 
     # Step 6: Clean up the annotated file to keep only the desired columns (optional) and save in the output directory
     # awk 'BEGIN{OFS="\t"} {print $1, $2, $3, $8, $4}' "$OUTPUT_DIR/${file_prefix}_annotated_unique_bed.bed" > "$OUTPUT_DIR/${file_prefix}_final_bed.bed"
-    awk 'BEGIN{OFS="\t"} {print $1, $2, $3, ($8 == "." ? "NA" : $8), $4}' "$OUTPUT_DIR/${file_prefix}_annotated_unique_bed.bed" > "$OUTPUT_DIR/${file_prefix}_final_bed.bed"
+    awk 'BEGIN{OFS="\t"} {print $1, $2, $3, ($8 == "." ? "-" : $8)}' "$OUTPUT_DIR/${file_prefix}_annotated_unique_bed.bed" > "$OUTPUT_DIR/${file_prefix}_final_bed.bed"
 
     # Step 7: Copying the final BED to its final destination directory
     cp "$OUTPUT_DIR/${file_prefix}_final_bed.bed" "$FINAL_DIR/${file_prefix}_final_bed.bed"

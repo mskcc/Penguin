@@ -115,12 +115,28 @@ GENOME_VERSION=hg19
 refFile1="hg19/Homo_sapiens_assembly19.fasta"
 refFile2="hg19_virus/hg19_virus.fa"
 
-bedFolder=${referenceDirectory}/beds
-bedName_impact_IM7="IMPACT505_picard_baits-1.interval_list"
-bedName_impact_IM6="IMPACT468_picard_baits.interval_list"
-bedName_impact_IM5="cv5_picard_baits_withoutHeaders.interval_list"
-bedName_impact_IM3="cv3_hg19_picard_baits_withoutHeaders.interval_list"
-bedName_impact_IH4="IMPACT-Heme_v4_baits_withoutHeaders.ilist"
-bedName_impact_IH3="IM3_picard_baits.interval_list"
+bedFolder_annotated=${referenceDirectory}/beds/final_beds
+bedName_impact_IM7="IMPACT505_picard_baits-1_final_bed.bed"
+bedName_impact_IM6="IMPACT468_picard_baits_final_bed.bed"
+bedName_impact_IM5="cv5_picard_baits_withoutHeaders_final_bed.bed"
+bedName_impact_IM3="cv3_hg19_picard_baits_withoutHeaders_final_bed.bed"
+bedName_impact_IH3="IMPACT-Heme_v2_BAITS_withoutHeaders.iList_final_bed.bed"
+bedName_impact_IH4="IMPACT-Heme_v4_baits_withoutHeaders.ilist_final_bed.bed"
 
 
+bedFolder_original=${referenceDirectory}/beds/original_beds
+# bedName_impact_IM7="IMPACT505_picard_baits-1.interval_list"
+# bedName_impact_IM6="IMPACT468_picard_baits.interval_list"
+# bedName_impact_IM5="cv5_picard_baits_withoutHeaders.interval_list"
+# bedName_impact_IM3="cv3_hg19_picard_baits_withoutHeaders.interval_list"
+# bedName_impact_IH4="IMPACT-Heme_v4_baits_withoutHeaders.ilist"
+# bedName_impact_IH3="IM3_picard_baits.interval_list"
+
+
+# Normal Samples for Panel of Normal Reference cnn step
+normalSampleID_IM7="P-0020768-N01-IM7"
+normalSampleID_IM6="P-0028479-N01-IM6"
+normalSampleID_IM5="P-0005235-N01-IM5"
+normalSampleID_IM3="P-0000204-N01-IM3"
+normalSampleID_IH4=="P-0042157-N01-IH3"
+normalSampleID_IH3=="P-0042157-N01-IH3"
