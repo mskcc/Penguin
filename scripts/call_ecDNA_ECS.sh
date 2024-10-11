@@ -81,8 +81,15 @@ inputDirectory=$(readlink -f "$inputDirectory")
 
 TUMOR_SAMPLE_ID=${sampleID_Tumor}
 echo "Tumor ID = $TUMOR_SAMPLE_ID"
-NORMAL_SAMPLE_ID=${sampleID_Normal}
-echo "Normal ID = $NORMAL_SAMPLE_ID"
+if [[ "$somaticStatus" == "Matched" ]]; then
+    NORMAL_SAMPLE_ID=${sampleID_Normal}
+    echo "Running in Tumor Normal Matched Mode:"
+    echo "Normal ID = $NORMAL_SAMPLE_ID"
+else
+    NORMAL_SAMPLE_ID=${normalSample_pon}
+    echo "Running in Tumor Only Un-Matched Mode:"
+    echo "Normal ID = $NORMAL_SAMPLE_ID"
+fi
 
 TUMOR_PURITY=${tumor_Purity}
 echo "Tumor Purity = $TUMOR_PURITY"
@@ -102,7 +109,9 @@ outFile_flatRef_1=${outDir_flatReference}/ECS_${bedPrefix}.large.antitarget.bed
 outFile_flatRef_2=${outDir_flatReference}/ECS_${bedPrefix}_pon_large.reference.cnn
 outFile_flatRef_3=${outDir_flatReference}/ECS_${bedPrefix}.large.target.bed
 
+mkdir -p "echoOutputDirectory" 2>/dev/null
 mkdir -p "$flagDir" 2>/dev/null
+mkdir -p "$tmpDirectory" 2>/dev/null
 
 flag_inProcess=$flagDir/${TUMOR_SAMPLE_ID}.running
 flag_done=$flagDir/${TUMOR_SAMPLE_ID}.done
@@ -276,7 +285,8 @@ if [[ ! -f $flag_done ]]; then
     --exclude ${EXCLUDE_FILE} \
     --tumor_bam ${bamFilePath_T} \
     --tumor_sample_id ${TUMOR_SAMPLE_ID} \
-    --reference_cnn ${outFile_flatRef_2}"
+    --reference_cnn ${outFile_flatRef_2} \
+     --temp_dir ${tmpDirectory}"
 
   echo
   echo "Running Step 2: ECHO Pre-Processor - Run ECHO preprocessor with Reference ....."

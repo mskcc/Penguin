@@ -2,6 +2,10 @@
 
 # config file
 CONFIG_FILE=$1
+shift
+listOfSamples=$1
+shift
+
 CONFIG_FILE=$(readlink -f "$CONFIG_FILE")
 
 source $CONFIG_FILE
@@ -18,6 +22,7 @@ inputDir=$inputDirectory
 
 mkdir -p $sampleFacetsDirectory 2>/dev/null
 mkdir -p $mergedOutputDirectory 2>/dev/null
+mkdir -p $manifestDirectory 2>/dev/null
 
 # Manifest doc
 sampleTrackerFile=$sampleInfoSubset
@@ -42,6 +47,12 @@ sampleReportFacetsNameFull="${sampleFacetsDirectory}/sample_report_facets_full.t
 ################################
 
 ts=$(date +%Y%m%d%H%M%S)
+
+# Making a copy of List of Samples inside Manifest Directory
+cmd="cp -f ${listOfSamples} ${sampleFull} 2>/dev/null"
+echo "$cmd"
+eval $cmd
+echo
 
 echo "Creating Manifest..."
 cmd="python3.8 ./cBioPortalApiPull.py $dataAccessToken $sampleFull $sampleSubset $sampleTrackerFull $sampleTrackerFile $defaultPurity ${manifestDir}/exclusion_${ts}.tsv"

@@ -13,18 +13,22 @@ projectName="ECS_Integration_Tests"
 ###############
 
 # Directory containing input folder
-dataDirectory="../data"
+dataDirectory="/juno/cmo/bergerlab/sumans/Project_ecDNA/Production/penguin/data"
 
 # Directory containing inputs
 inputDirectory="${dataDirectory}/input"
 
-# Manifest directory
-manifestDirectory="${inputDirectory}/manifest/${projectName}"
+
 
 # Output, log and flag directories
-outputDirectory="${dataDirectory}/output/output_${projectName}"
-logDirectory="${dataDirectory}/log/log_${projectName}"
-flagDirectory="${dataDirectory}/flag/flag_${projectName}"
+projectDirectory="${dataDirectory}/projects/${projectName}"
+# Manifest directory
+manifestDirectory="${projectDirectory}/manifest"
+
+outputDirectory="${projectDirectory}/output"
+logDirectory="${projectDirectory}/log"
+flagDirectory="${projectDirectory}/flag"
+tmpDirectory="${projectDirectory}/tmp"
 
 # For the initial echo calls
 echoOutputDirectory="${outputDirectory}/echoCalls"
@@ -84,7 +88,7 @@ clusterTime="72"
 # Access to cBioPortal Private API #
 ####################################
 
-dataAccessToken="/home/yuk3/cbioportal_data_access_token.txt"
+dataAccessToken="/juno/cmo/bergerlab/sumans/Project_ecDNA/Production/cbioportal_data_access_token.txt"
 
 ###################
 # Reference Files #
