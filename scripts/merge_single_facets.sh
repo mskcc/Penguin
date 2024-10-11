@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 # Directory containing your files
 directoryToMerge=$1

@@ -60,7 +60,7 @@ You can see an example sampleId list in ```/example/input```. Edit ```sampleFull
 
 ```
 cd scripts
-sh generateECHOResults.sh ../global_config_bash.rc
+sh generateECHOResults.sh $config_file $list_of_samples 
 ```
 
 ### Step 2: Merge ECHO Results

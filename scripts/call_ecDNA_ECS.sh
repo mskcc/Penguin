@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 # Set up config file
 CONFIG_FILE=$1
