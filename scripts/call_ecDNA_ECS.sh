@@ -328,7 +328,6 @@ if [[ ! -f $flag_done ]]; then
 
   else
     echo "Step 3 Done"
-    rm "$flag_inProcess" && touch "$flag_done"
   fi
 
 
