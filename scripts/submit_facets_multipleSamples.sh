@@ -3,6 +3,10 @@ set -euo pipefail
 # config file
 CONFIG_FILE=$1
 source $CONFIG_FILE
+shift
+
+echoReportFile=$1
+shift
 
 ################################
 # set up using the config file #
@@ -16,7 +20,7 @@ logDir=$facetsLogDirectory
 outputDir=$facetsOutputDirectory
 flagDir=$facetsFlagDirectory
 
-echoReportFile=${mergedOutputDirectory}/merged.ECHO_results.csv
+# echoReportFile=${mergedOutputDirectory}/merged.ECHO_results.csv
 
 ts=$(date +%Y%m%d%H%M%S)
 

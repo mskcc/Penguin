@@ -35,8 +35,10 @@ echoOutputDirectory="${outputDirectory}/echoCalls"
 echoLogDirectory="${logDirectory}/echoCalls"
 echoFlagDirectory="${flagDirectory}/echoCalls"
 
+
 # For the merged files
 mergedOutputDirectory="${outputDirectory}/merged"
+
 
 # For facets sample calls
 sampleFacetsDirectory="${outputDirectory}/sampleFacets"
@@ -45,6 +47,11 @@ sampleFacetsDirectory="${outputDirectory}/sampleFacets"
 facetsOutputDirectory="${outputDirectory}/facetsCalls"
 facetsLogDirectory="${logDirectory}/facetsCalls"
 facetsFlagDirectory="${flagDirectory}/facetsCalls"
+
+# For ecDNA calling:
+suffix_ecDNA_file1="filtered_p_ecDNA.tsv"
+suffix_ecDNA_file2="filtered_p_ecDNA_filtered_impactGeneList.tsv"
+suffix_ecDNA_file3="filtered_p_ecDNA_unfiltered_impactGeneList.tsv"
 
 ###########
 # samples #
@@ -144,3 +151,13 @@ normalSampleID_IM5="P-0005235-N01-IM5"
 normalSampleID_IM3="P-0000204-N01-IM3"
 normalSampleID_IH4=="P-0042157-N01-IH3"
 normalSampleID_IH3=="P-0042157-N01-IH3"
+
+
+# Gene lists for gene Panels
+
+geneListFolder=${referenceDirectory}/genePanels
+genePanel_IM7="geneList_IM7_505.txt"
+genePanel_IM6="geneList_IM6_468.txt"
+genePanel_IM5="geneList_IM5_410.txt"
+genePanel_IM3="geneList_IM3_341.txt"
+

@@ -331,7 +331,7 @@ if [[ ! -f $flag_done ]]; then
   fi
 
 
-  cmd="sh ./filter_ecDNA_calls.sh $outFile_step3 $geneList"
+  cmd="sh ./filter_ecDNA_calls.sh $CONFIG_FILE $outFile_step3 $geneList"
 
   echo
   echo "Running Step 4:  Formatting & Filtering the ecDNA output-results ....."
