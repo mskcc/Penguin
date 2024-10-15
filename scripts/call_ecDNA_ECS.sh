@@ -45,6 +45,9 @@ shift
 normalSample_pon=$1
 shift
 
+geneList=$1
+shift
+
 # refFile=$1
 # shift
 
@@ -109,6 +112,7 @@ bedPrefix=$(basename "$BED_FILE" .bed)
 outFile_flatRef_1=${outDir_flatReference}/ECS_${bedPrefix}.large.antitarget.bed
 outFile_flatRef_2=${outDir_flatReference}/ECS_${bedPrefix}_pon_large.reference.cnn
 outFile_flatRef_3=${outDir_flatReference}/ECS_${bedPrefix}.large.target.bed
+outFile_step3=${outDir_echoCaller}/${TUMOR_SAMPLE_ID}.ecs_results.tsv
 
 mkdir -p "echoOutputDirectory" 2>/dev/null
 mkdir -p "$flagDir" 2>/dev/null
@@ -135,7 +139,7 @@ if [[ ! -f $flag_done ]]; then
 
         cmd="python3.8 generateBAMFilePath.py \"$keyFile\" \"$bamMirrorPath\" \"$TUMOR_SAMPLE_ID\" T"
         if ! bamFilePath_T=$(eval $cmd); then
-          echo "BAM file not found"
+          echo "Tumor BAM file not found"
           rm "$flag_inProcess" && touch "$flag_fail"
           exit 1
         fi
@@ -143,12 +147,17 @@ if [[ ! -f $flag_done ]]; then
 
         if [[ "$somaticStatus" == "Matched" ]]; then
           cmd="python3.8 generateBAMFilePath.py \"$keyFile\" \"$bamMirrorPath\" \"$NORMAL_SAMPLE_ID\" N"
+          if ! bamFilePath_N=$(eval $cmd); then
+            echo "Normal BAM file not found"
+            echo "Changing to Tumor Only Un-matched mode and attempt to use a pre-defined Normal sample for PON"
+            cmd="python3.8 generateBAMFilePath.py \"$keyFile\" \"$bamMirrorPath\" \"$normalSample_pon\" N"
+          fi
         else
           cmd="python3.8 generateBAMFilePath.py \"$keyFile\" \"$bamMirrorPath\" \"$normalSample_pon\" N"
         fi
 
         if ! bamFilePath_N=$(eval $cmd); then
-          echo "BAM file not found"
+          echo "Normal BAM file not found"
           rm "$flag_inProcess" && touch "$flag_fail"
           exit 1
         else
@@ -233,15 +242,9 @@ if [[ ! -f $flag_done ]]; then
     #     exit 1
     # fi
 
-    if [[ "$somaticStatus" == "Matched" ]]; then
 
-        PON_BAMS_LIST=$bamFilePath_N
+    PON_BAMS_LIST=$bamFilePath_N
 
-    elif [[ "$somaticStatus" == "Unmatched" ]]; then
-
-        PON_BAMS_LIST=$bamFilePath_N
-
-    fi
 
     if [[ ! -f ${outFile_flatRef_1} ]] || [[ ! -f ${outFile_flatRef_2} ]] || [[ ! -f ${outFile_flatRef_3} ]]; then
 
@@ -266,7 +269,7 @@ if [[ ! -f $flag_done ]]; then
       if ! eval "$cmd" ; then
         echo "Step 1 Failed"
         rm "$flag_inProcess" && touch "$flag_fail"
-        exit
+        exit 1
       else
         echo "Step 1 Done"
       fi
@@ -298,7 +301,7 @@ if [[ ! -f $flag_done ]]; then
   if ! eval "$cmd" ; then
     echo "Step 2 Failed"
     rm "$flag_inProcess" && touch "$flag_fail"
-    exit
+    exit 1
   else
     echo "Step 2 Done"
   fi
@@ -318,12 +321,31 @@ if [[ ! -f $flag_done ]]; then
   echo "$cmd"
   echo
 
-  if ! eval "$cmd" ; then
-    echo "Step 3 Failed"
-    rm "$flag_inProcess" && touch "$flag_fail"
+  if ! eval "$cmd" || [ ! -f "$outFile_step3" ] || [ ! -s "$outFile_step3" ] || [ $(wc -l < "$outFile_step3") -le 1 ]; then
+      echo "Step 3 Failed or output file does not meet the requirements."
+      rm "$flag_inProcess" && touch "$flag_fail"
+      exit 1
 
   else
     echo "Step 3 Done"
+    rm "$flag_inProcess" && touch "$flag_done"
+  fi
+
+
+  cmd="sh ./filter_ecDNA_calls.sh $outFile_step3 $geneList"
+
+  echo
+  echo "Running Step 4:  Formatting & Filtering the ecDNA output-results ....."
+  echo "$cmd"
+  echo
+
+  if ! eval "$cmd" ; then
+    echo "Step 4 Failed"
+    rm "$flag_inProcess" && touch "$flag_fail"
+    exit 1
+
+  else
+    echo "Step 4 Done"
     rm "$flag_inProcess" && touch "$flag_done"
   fi
 
