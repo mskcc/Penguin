@@ -55,11 +55,11 @@ python3 convert_ecDNA_format.py "$input_file" "$formatted_file"
 cut --complement -f4 "$formatted_file" > "$no_cn_file"
 
 # Step 5: Filter the noCN file based on p_ecDNA >= 0.4
-awk 'NR==1 || $4 >= 0.4' "$no_cn_file" > "$filtered_file"
+awk -F'\t' -v threshold="$p_ecDNA_cutoff" 'NR==1 || $4 >= threshold' "$no_cn_file" > "$filtered_file"
 
 # Step 6: Use the filtered file for further processing (comparing it with the gene list)
-awk 'NR==FNR {genes[$1]; next} FNR==1 || ($2 in genes)' "$gene_list_file" "$filtered_file" > "$file3"
-awk 'NR==FNR {genes[$1]; next} FNR==1 || !($2 in genes)' "$gene_list_file" "$filtered_file" > "$file4"
+awk -F'\t' 'NR==FNR {genes[$1]; next} FNR==1 || ($2 in genes)' "$gene_list_file" "$filtered_file" > "$file3"
+awk -F'\t' 'NR==FNR {genes[$1]; next} FNR==1 || !($2 in genes)' "$gene_list_file" "$filtered_file" > "$file4"
 
 echo "Pipeline completed."
 echo "File without CN: $no_cn_file"
