@@ -8,7 +8,7 @@ source $CONFIG_FILE
 dataDir=$dataDirectory
 outputDir=${mergedOutputDirectory}
 flagDirFacets=${facetsFlagDirectory}
-mergedFile=${outputDir}/merged.FACETS_gene_results.tsv
+mergedFile=${facets_output_report}
 
 echo "Scanning ${facetsFlagDirectory}"
 countFail=$(find ${facetsFlagDirectory} -type f -name "*.fail" | wc -l)
@@ -48,5 +48,5 @@ echo "Total files merged: $count"
 line_count_facets=$(wc -l < $mergedFile)
 echo "Number of lines in merged facets: $line_count_facets"
 
-line_count_echo=$(wc -l < ${outputDir}/merged.ECHO_results.csv)
-echo "Number of lines in merged echo: $line_count_echo"
+line_count_echo=$(wc -l < ${facets_input_report})
+echo "Number of lines in merged ecDNA report: $line_count_echo"

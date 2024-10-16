@@ -20,6 +20,10 @@ logDir=$facetsLogDirectory
 outputDir=$facetsOutputDirectory
 flagDir=$facetsFlagDirectory
 
+mkdir -p "$flagDir" 2>/dev/null
+mkdir -p "$logDir" 2>/dev/null
+mkdir -p "$outputDir" 2>/dev/null
+
 # echoReportFile=${mergedOutputDirectory}/merged.ECHO_results.csv
 
 ts=$(date +%Y%m%d%H%M%S)
@@ -28,20 +32,31 @@ if [[ $clusterTime != *:* ]]; then
     clusterTime="${clusterTime}:00"
 fi
 
+# Initialize a flag to indicate the first line
+first_line=true
+
 # Read each line of file
-while IFS=, read -r sample_id _ gene _; do
-    IFS='-' read -ra parts <<< "$sample_id"
-    sampleID=""
-    for ((i=0; i<4 && i<${#parts[@]}; i++)); do
-        sampleID+="${parts[i]}-"
-    done
-    sampleID=${sampleID%-} 
+while IFS=$'\t', read -r sample_id gene _; do
+    # Skip the header line
+    if $first_line; then
+        first_line=false
+        continue
+    fi
+    # IFS='-' read -ra parts <<< "$sample_id"
+    # sampleID=""
+    sampleID="$sample_id"
+    # for ((i=0; i<4 && i<${#parts[@]}; i++)); do
+    #     sampleID+="${parts[i]}-"
+    # done
+    # sampleID=${sampleID%-} 
 
     
     # Remove NA
     if [[ $sampleID == "NA" ]]; then
         sampleID=""
     fi
+
+    echo "Sample ID: $sampleID, Gene: $gene"
 
     if [[ $gene != "gene" ]]; then
         flag_done="${flagDir}/${sampleID}_${gene}.done"

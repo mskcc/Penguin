@@ -27,7 +27,10 @@ fi
 
 #################################
 
-echoReportFile=${mergedOutputDirectory}/merged_ecDNA_results_${suffix_ecDNA_file2}
+echoReportFile=${facets_input_report}
+
+echo "Input Mereged ecDNA report file = $echoReportFile"
+
 ts=$(date +%Y%m%d%H%M%S)
 
 if [ -f "$echoReportFile" ]; then
