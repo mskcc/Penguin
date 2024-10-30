@@ -37,8 +37,9 @@ echoFlagDirectory="${flagDirectory}/echoCalls"
 
 # For ecDNA calling:
 suffix_ecDNA_file1="filtered_p_ecDNA.tsv"
-suffix_ecDNA_file2="filtered_p_ecDNA_filtered_impactGeneList.tsv"
-suffix_ecDNA_file3="filtered_p_ecDNA_unfiltered_impactGeneList.tsv"
+suffix_ecDNA_file2="filtered_p_ecDNA_impactGene_annotated.tsv"
+# suffix_ecDNA_file2="filtered_p_ecDNA_filtered_impactGeneList.tsv"
+# suffix_ecDNA_file3="filtered_p_ecDNA_unfiltered_impactGeneList.tsv"
 p_ecDNA_cutoff=0.4
 
 
@@ -57,6 +58,7 @@ facetsFlagDirectory="${flagDirectory}/facetsCalls"
 facets_input_report_option=$suffix_ecDNA_file2
 facets_input_report=${mergedOutputDirectory}/merged_ecDNA_results_${facets_input_report_option}
 facets_output_report=${mergedOutputDirectory}/merged_facets_${facets_input_report_option}
+combined_output_report=${mergedOutputDirectory}/combined_ecDNA_facets_${facets_input_report_option}
 
 ###########
 # samples #
