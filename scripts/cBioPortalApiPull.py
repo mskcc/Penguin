@@ -3,6 +3,7 @@ from bravado.client import SwaggerClient
 from bravado.requests_client import RequestsClient
 import sys
 import pandas as pd
+import json
 
 # Read in token value
 tokenFile = sys.argv[1]
@@ -70,11 +71,24 @@ for idx, row in manifest.iterrows() :
     sample_dict[row['sampleId']] = idx
 
 # Set up cbioportal
-cbioportal = SwaggerClient.from_url('https://cbioportal.mskcc.org/api/v2/api-docs',
-                                    http_client=http_client,
-                                    config={"validate_requests":False,
-                                            "validate_responses":False,
-                                            "validate_swagger_spec": False}
+# cbioportal = SwaggerClient.from_url('https://cbioportal.mskcc.org/api/v2/api-docs',
+#                                     http_client=http_client,
+#                                     config={"validate_requests":False,
+#                                             "validate_responses":False,
+#                                             "validate_swagger_spec": False}
+# )
+
+with open('/juno/cmo/bergerlab/sumans/Project_ecDNA/Production/api-docs.json') as f:
+    api_spec = json.load(f)
+
+cbioportal = SwaggerClient.from_spec(
+    api_spec,  # Local file path
+    http_client=http_client,
+    config={
+        "validate_requests": False,
+        "validate_responses": False,
+        "validate_swagger_spec": False
+    }
 )
 
 # Fill in sample-wise info (Somatic status, tumor purity, cancer type, cancer type detailed)

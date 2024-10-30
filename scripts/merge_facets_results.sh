@@ -8,7 +8,9 @@ source $CONFIG_FILE
 dataDir=$dataDirectory
 outputDir=${mergedOutputDirectory}
 flagDirFacets=${facetsFlagDirectory}
+# ecDNA_report=${facets_input_report}
 mergedFile=${facets_output_report}
+# combinedFile=${combined_output_report}
 
 echo "Scanning ${facetsFlagDirectory}"
 countFail=$(find ${facetsFlagDirectory} -type f -name "*.fail" | wc -l)
@@ -23,7 +25,7 @@ fi
 count=0
 
 # Start of file
-echo -e "sample\tgene\tgene_start\tgene_end\tseg_start\tseg_end\tseg_length\tcf\ttcn\tlcn\tcn_state\tfilter\ttsg\tseg\tmedian_cnlr_seg\tsegclust\tmcn\tgenes_on_seg\tgene_snps\tgene_het_snps\tspans_segs" > $mergedFile
+echo -e "sample_id\tgene\tgene_start\tgene_end\tseg_start\tseg_end\tseg_length\tcf\ttcn\tlcn\tcn_state\tfilter\ttsg\tseg\tmedian_cnlr_seg\tsegclust\tmcn\tgenes_on_seg\tgene_snps\tgene_het_snps\tspans_segs" > $mergedFile
 # Iterate and add the first line
 for file in $facetsOutputDirectory/*.tsv; do
 
@@ -50,3 +52,13 @@ echo "Number of lines in merged facets: $line_count_facets"
 
 line_count_echo=$(wc -l < ${facets_input_report})
 echo "Number of lines in merged ecDNA report: $line_count_echo"
+
+
+# Call the Python script to merge ecDNA and facets reports
+python3 merge_reports.py "$facets_input_report" "$mergedFile" "$combined_output_report"
+
+# Count lines in combined file
+line_count_combined=$(wc -l < "$combined_output_report")
+echo "Number of lines in combined report: $line_count_combined"
+
+echo "Combined report generated at $combined_output_report with $line_count_combined lines."
