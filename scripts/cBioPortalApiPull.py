@@ -185,7 +185,7 @@ subsetManifest = subsetManifest[mask]
 for idx, row in subsetManifest.iterrows() :
     if row['12_245_partA'] == "NO" :
         print(f"Dropping {row['sampleId']}, 12-245 Non Consent")
-        new_row = {'sampleId' : row['sampleId'], 'reason' : "Incorrect_Panel"}
+        new_row = {'sampleId' : row['sampleId'], 'reason' : "12-245_NonConsent"}
         new_df = pd.DataFrame([new_row])
         exclusion_df = pd.concat([new_df, exclusion_df], ignore_index = True)
 subsetManifest = subsetManifest[subsetManifest['12_245_partA'] != 'NO']

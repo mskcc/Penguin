@@ -35,6 +35,7 @@ sampleSubset=$sampleSubset
 sampleFull=$sampleFull
 facetsPurity=$useFacetsPurity
 defaultPurity=$defaultPurity
+exclusionFile=$exclusionFile_cbioportal
 
 # Cluster stats
 clusterCPUNum=$clusterCPUNum
@@ -59,7 +60,7 @@ eval $cmd
 echo
 
 echo "Creating Manifest..."
-cmd="python3.8 ./cBioPortalApiPull.py $dataAccessToken $sampleFull $sampleSubset $sampleTrackerFull $sampleTrackerFile $defaultPurity ${manifestDir}/exclusion_${ts}.tsv"
+cmd="python3.8 ./cBioPortalApiPull.py $dataAccessToken $sampleFull $sampleSubset $sampleTrackerFull $sampleTrackerFile $defaultPurity $exclusionFile"
 echo "$cmd"
 eval $cmd
 echo
