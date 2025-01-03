@@ -75,6 +75,19 @@ def process_ecDNA_analysis(flag_folder, manifest_folder, output_folder, exclusio
     annotated_successful_samples_df = annotated_sample_summary_df[annotated_sample_summary_df["analysis_status"] == "done"]
     annotated_successful_samples_df.to_csv(annotated_successful_summary_file, sep="\t", index=False, na_rep="None")
 
+    # Save updated exclusion list
+    updated_excluded_samples = sample_summary_df[sample_summary_df["analysis_status"] != "done"]
+    updated_exclusion_file = os.path.join(manifest_folder, "updated_exclusion_list.tsv")
+    updated_excluded_samples[["sample_id", "analysis_status"]].to_csv(updated_exclusion_file, sep="\t", index=False, header=False)
+
+    # Save failed samples list
+    failed_samples_file = os.path.join(manifest_folder, "failed_samples_list.tsv")
+    updated_excluded_samples[["sample_id"]].to_csv(failed_samples_file, sep="\t", index=False, header=False)
+
+    # Save successful samples list
+    successful_samples_file = os.path.join(manifest_folder, "done_samples_list.tsv")
+    successful_samples_df[["sample_id"]].to_csv(successful_samples_file, sep="\t", index=False, header=False)
+
     # Prepare report
     facets_results_file = "combined_ecDNA_facets_filtered_p_ecDNA_impactGene_annotated.tsv"
     final_results_file = os.path.basename(results_file)
@@ -82,14 +95,14 @@ def process_ecDNA_analysis(flag_folder, manifest_folder, output_folder, exclusio
     report = (
         f"Project Analysis Summary:\n"
         f"- Initial sample count: {initial_sample_count}\n"
-        f"- Samples with missing data (Non-IMPACT, 12-245 non-consent, missing BAM data): {len(sample_summary_df[sample_summary_df['analysis_status'] != 'done'])}\n"
+        f"- Samples with missing data (Non-IMPACT, 12-245 non-consent, missing BAM data): {len(updated_excluded_samples)}\n"
         f"- Samples with raw data available (Successful Samples): {len(successful_samples_df)}\n"
         f"- Total ecDNA+ genes (all): {len(results[results['ecDNA_status'] == 'ecDNA'])}\n"
         f"- Total ecDNA+ genes (IMPACT): {len(results[(results['ecDNA_status'] == 'ecDNA') & (results['gene_included_in_impact'] == 'yes')])}\n"
         f"- Total unique ecDNA+ samples: {results[results['ecDNA_status'] == 'ecDNA']['sample_id'].nunique()}\n"
         "\n"
         "Attachments:\n"
-        f"- Sample Summary (Successful Samples, Annotated with FACETS & cBioPortal data): successful_sample_summary_annotated.tsv\n"
+        f"- Sample Summary (Successful Samples, Annotated): successful_sample_summary_annotated.tsv\n"
         f"- ecDNA+ gene-level results: {final_results_file}\n"
         f"- ecDNA+ results with FACETS annotations: {facets_results_file}\n"
     )
@@ -105,6 +118,9 @@ def process_ecDNA_analysis(flag_folder, manifest_folder, output_folder, exclusio
     print(f"Original successful sample summary saved to: {successful_summary_file}")
     print(f"Annotated sample summary saved to: {annotated_sample_summary_file}")
     print(f"Annotated successful sample summary saved to: {annotated_successful_summary_file}")
+    print(f"Updated exclusion list saved to: {updated_exclusion_file}")
+    print(f"Failed samples list saved to: {failed_samples_file}")
+    print(f"Successful samples list saved to: {successful_samples_file}")
     print(f"Email summary saved to: {email_report_file}")
 
 # Main function to handle argument parsing

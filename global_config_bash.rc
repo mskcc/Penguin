@@ -6,7 +6,7 @@
 #                                               #
 #################################################
 
-projectName="Project_Jake_Lee_EGFR_Nov2024"
+projectName="Project_Ezra_Rosen_BRCA_Sep2024"
 
 ###############
 # directories #
@@ -40,7 +40,7 @@ suffix_ecDNA_file1="filtered_p_ecDNA.tsv"
 suffix_ecDNA_file2="filtered_p_ecDNA_impactGene_annotated.tsv"
 # suffix_ecDNA_file2="filtered_p_ecDNA_filtered_impactGeneList.tsv"
 # suffix_ecDNA_file3="filtered_p_ecDNA_unfiltered_impactGeneList.tsv"
-p_ecDNA_cutoff=0.1
+p_ecDNA_cutoff=0.5
 
 
 # For the merged files
@@ -71,6 +71,7 @@ sampleFull="${manifestDirectory}/FileB.tsv"
 sampleInfoFull="${manifestDirectory}/FileA.tsv"
 sampleSubset="${manifestDirectory}/FileB_run.tsv"
 sampleInfoSubset="${manifestDirectory}/FileA_run.tsv"
+exclusionFile_cbioportal="${manifestDirectory}/exclusion_cbio.tsv"
 
 # Columns of information in the sampleTracker (0 indexed)
 sampleIDColumn=0
