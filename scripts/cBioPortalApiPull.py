@@ -3,6 +3,7 @@ from bravado.client import SwaggerClient
 from bravado.requests_client import RequestsClient
 import sys
 import pandas as pd
+import json
 
 # Read in token value
 tokenFile = sys.argv[1]
@@ -76,6 +77,19 @@ cbioportal = SwaggerClient.from_url('https://cbioportal.mskcc.org/api/v2/api-doc
                                             "validate_responses":False,
                                             "validate_swagger_spec": False}
 )
+
+# with open('/juno/cmo/bergerlab/sumans/Project_ecDNA/Production/api-docs.json') as f:
+#     api_spec = json.load(f)
+
+# cbioportal = SwaggerClient.from_spec(
+#     api_spec,  # Local file path
+#     http_client=http_client,
+#     config={
+#         "validate_requests": False,
+#         "validate_responses": False,
+#         "validate_swagger_spec": False
+#     }
+# )
 
 # Fill in sample-wise info (Somatic status, tumor purity, cancer type, cancer type detailed)
 all_impact = cbioportal.Clinical_Data.getAllClinicalDataInStudyUsingGET(studyId = "mskimpact").result()
@@ -171,7 +185,7 @@ subsetManifest = subsetManifest[mask]
 for idx, row in subsetManifest.iterrows() :
     if row['12_245_partA'] == "NO" :
         print(f"Dropping {row['sampleId']}, 12-245 Non Consent")
-        new_row = {'sampleId' : row['sampleId'], 'reason' : "Incorrect_Panel"}
+        new_row = {'sampleId' : row['sampleId'], 'reason' : "12-245_NonConsent"}
         new_df = pd.DataFrame([new_row])
         exclusion_df = pd.concat([new_df, exclusion_df], ignore_index = True)
 subsetManifest = subsetManifest[subsetManifest['12_245_partA'] != 'NO']

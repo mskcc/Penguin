@@ -1,5 +1,5 @@
 #!/bin/bash
-
+set -euo pipefail
 # This script submits one job on the cluster for facets gene
 
 CONFIG_FILE=$1

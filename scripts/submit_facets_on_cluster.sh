@@ -1,5 +1,5 @@
 #!/bin/bash
-
+set -euo pipefail
 # config file
 CONFIG_FILE=$1
 source $CONFIG_FILE
@@ -27,7 +27,10 @@ fi
 
 #################################
 
-echoReportFile=${mergedOutputDirectory}/merged.ECHO_results.csv
+echoReportFile=${facets_input_report}
+
+echo "Input Mereged ecDNA report file = $echoReportFile"
+
 ts=$(date +%Y%m%d%H%M%S)
 
 if [ -f "$echoReportFile" ]; then
@@ -39,12 +42,12 @@ if [ -f "$echoReportFile" ]; then
         -J 'facets_driver' \
         -o '${logDir}/facets_multiple_call_${ts}.stdout' \
         -e '${logDir}/facets_multiple_call_${ts}.stderr' \
-        sh submit_facets_multipleSamples.sh ${CONFIG_FILE}"
+        sh submit_facets_multipleSamples.sh ${CONFIG_FILE} ${echoReportFile}"
     echo "$cmd"
     eval $cmd
 
 else
-    echo "Generate merged ECHO report first. Aborting"
+    echo "Generate merged ecDNA report first. Aborting"
 fi
 
 

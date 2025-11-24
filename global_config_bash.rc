@@ -6,33 +6,46 @@
 #                                               #
 #################################################
 
-projectName="BB_EchoCaller_v2_50Pediatric"
+projectName="Project_Ezra_Rosen_BRCA_Sep2024"
 
 ###############
 # directories #
 ###############
 
 # Directory containing input folder
-dataDirectory="../data"
+dataDirectory="/juno/cmo/bergerlab/sumans/Project_ecDNA/Production/penguin/data"
 
 # Directory containing inputs
 inputDirectory="${dataDirectory}/input"
 
-# Manifest directory
-manifestDirectory="${inputDirectory}/manifest/${projectName}"
+
 
 # Output, log and flag directories
-outputDirectory="${dataDirectory}/output/output_${projectName}"
-logDirectory="${dataDirectory}/log/log_${projectName}"
-flagDirectory="${dataDirectory}/flag/flag_${projectName}"
+projectDirectory="${dataDirectory}/projects/${projectName}"
+# Manifest directory
+manifestDirectory="${projectDirectory}/manifest"
+
+outputDirectory="${projectDirectory}/output"
+logDirectory="${projectDirectory}/log"
+flagDirectory="${projectDirectory}/flag"
+tmpDirectory="${projectDirectory}/tmp"
 
 # For the initial echo calls
 echoOutputDirectory="${outputDirectory}/echoCalls"
 echoLogDirectory="${logDirectory}/echoCalls"
 echoFlagDirectory="${flagDirectory}/echoCalls"
 
+# For ecDNA calling:
+suffix_ecDNA_file1="filtered_p_ecDNA.tsv"
+suffix_ecDNA_file2="filtered_p_ecDNA_impactGene_annotated.tsv"
+# suffix_ecDNA_file2="filtered_p_ecDNA_filtered_impactGeneList.tsv"
+# suffix_ecDNA_file3="filtered_p_ecDNA_unfiltered_impactGeneList.tsv"
+p_ecDNA_cutoff=0.5
+
+
 # For the merged files
 mergedOutputDirectory="${outputDirectory}/merged"
+
 
 # For facets sample calls
 sampleFacetsDirectory="${outputDirectory}/sampleFacets"
@@ -41,6 +54,11 @@ sampleFacetsDirectory="${outputDirectory}/sampleFacets"
 facetsOutputDirectory="${outputDirectory}/facetsCalls"
 facetsLogDirectory="${logDirectory}/facetsCalls"
 facetsFlagDirectory="${flagDirectory}/facetsCalls"
+
+facets_input_report_option=$suffix_ecDNA_file2
+facets_input_report=${mergedOutputDirectory}/merged_ecDNA_results_${facets_input_report_option}
+facets_output_report=${mergedOutputDirectory}/merged_facets_${facets_input_report_option}
+combined_output_report=${mergedOutputDirectory}/combined_ecDNA_facets_${facets_input_report_option}
 
 ###########
 # samples #
@@ -53,6 +71,7 @@ sampleFull="${manifestDirectory}/FileB.tsv"
 sampleInfoFull="${manifestDirectory}/FileA.tsv"
 sampleSubset="${manifestDirectory}/FileB_run.tsv"
 sampleInfoSubset="${manifestDirectory}/FileA_run.tsv"
+exclusionFile_cbioportal="${manifestDirectory}/exclusion_cbio.tsv"
 
 # Columns of information in the sampleTracker (0 indexed)
 sampleIDColumn=0
@@ -60,7 +79,7 @@ tumorPurityColumn=1
 somaticStatusColumn=2
 
 # True if we want to use facets purity instead of pathology (True or False)
-useFacetsPurity=False
+useFacetsPurity=True
 defaultPurity=20
 
 # Analysis type (1 or 2)
@@ -84,29 +103,69 @@ clusterTime="72"
 # Access to cBioPortal Private API #
 ####################################
 
-dataAccessToken="/home/yuk3/cbioportal_data_access_token.txt"
+dataAccessToken="/juno/cmo/bergerlab/sumans/Project_ecDNA/Production/cbioportal_data_access_token.txt"
 
 ###################
 # Reference Files #
 ###################
 
+bamMirrorPath_impact="/juno/dmp/share/irb12_245"
 keyFile="/juno/dmp/request/12-245/key.txt"
 singularity_cache=/home/sumans/.singularity/cache
 
-image_echoPreProcessor="boundlessbio-echo-preprocessor-v2.0.4.img"
-image_echoCaller="boundlessbio-echo-caller-v2.4.0.img"
+# image_echoPreProcessor="boundlessbio-echo-preprocessor-v2.0.4.img"
+# image_echoCaller="boundlessbio-echo-caller-v2.4.0.img"
+image_echoPreProcessor="boundlessbio-echo-preprocessor-release-v2.3.1.img"
+image_echoCaller="boundlessbio-ecs-v2.0.0.img"
 imagePath_echoPreProcessor=${singularity_cache}/${image_echoPreProcessor}
 imagePath_echoCaller=${singularity_cache}/${image_echoCaller}
 
 inputDirectory=$(readlink -f "$inputDirectory")
-bedFolder=${inputDirectory}/beds
-ANNOTATION_FILE=${inputDirectory}/references/refFlat_withoutPrefix.txt
-EXCLUDE_FILE=${inputDirectory}/references/human.hg19.excl.tsv
+referenceDirectory=/juno/cmo/bergerlab/sumans/Project_ecDNA/Production/references
+ANNOTATION_FILE=${referenceDirectory}/refFlat_withoutPrefix.txt
+EXCLUDE_FILE=${referenceDirectory}/human.hg19.excl.tsv
+ENCODE_EXCLUDE_FILE=${referenceDirectory}/hg19-blacklist.v2_withoutPrefix.bed
 
 mafFile="data_mutations_extended.txt"
 mafPath=/work/access/production/resources/cbioportal/current/msk_solid_heme
 
 GENOME_VERSION=hg19
 
-refFile1="b37.fasta"
-refFile2="GRCh37_plus_virus.fa"
+refFile1="hg19/Homo_sapiens_assembly19.fasta"
+refFile2="hg19_virus/hg19_virus.fa"
+
+bedFolder_annotated=${referenceDirectory}/beds/final_beds
+bedName_impact_IM7="IMPACT505_picard_baits-1_final_bed.bed"
+bedName_impact_IM6="IMPACT468_picard_baits_final_bed.bed"
+bedName_impact_IM5="cv5_picard_baits_withoutHeaders_final_bed.bed"
+bedName_impact_IM3="cv3_hg19_picard_baits_withoutHeaders_final_bed.bed"
+bedName_impact_IH3="IMPACT-Heme_v2_BAITS_withoutHeaders.iList_final_bed.bed"
+bedName_impact_IH4="IMPACT-Heme_v4_baits_withoutHeaders.ilist_final_bed.bed"
+
+
+bedFolder_original=${referenceDirectory}/beds/original_beds
+# bedName_impact_IM7="IMPACT505_picard_baits-1.interval_list"
+# bedName_impact_IM6="IMPACT468_picard_baits.interval_list"
+# bedName_impact_IM5="cv5_picard_baits_withoutHeaders.interval_list"
+# bedName_impact_IM3="cv3_hg19_picard_baits_withoutHeaders.interval_list"
+# bedName_impact_IH4="IMPACT-Heme_v4_baits_withoutHeaders.ilist"
+# bedName_impact_IH3="IM3_picard_baits.interval_list"
+
+
+# Normal Samples for Panel of Normal Reference cnn step
+normalSampleID_IM7="P-0020768-N01-IM7"
+normalSampleID_IM6="P-0028479-N01-IM6"
+normalSampleID_IM5="P-0005235-N01-IM5"
+normalSampleID_IM3="P-0000204-N01-IM3"
+normalSampleID_IH4=="P-0042157-N01-IH3"
+normalSampleID_IH3=="P-0042157-N01-IH3"
+
+
+# Gene lists for gene Panels
+
+geneListFolder=${referenceDirectory}/genePanels
+genePanel_IM7="geneList_IM7_505.txt"
+genePanel_IM6="geneList_IM6_468.txt"
+genePanel_IM5="geneList_IM5_410.txt"
+genePanel_IM3="geneList_IM3_341.txt"
+

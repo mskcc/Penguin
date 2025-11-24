@@ -1,5 +1,5 @@
 #!/bin/bash
-
+set -euo pipefail
 # The file of samples
 filename=$1
 shift
