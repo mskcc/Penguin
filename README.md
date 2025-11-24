@@ -3,6 +3,24 @@ Predicting ecDNA Novelties in Genes Using IMPACT NGS Data
 
 A Pipeline to Analyze ecDNA in collaboration with BoundlessBio
 
+### Workflow Overview
+
+Below is a high-level workflow diagram summarizing the steps in the PeNGUIN ecDNA pipeline:
+
+![PeNGUIN Workflow](Penguin_Workflow.png)
+
+### Project Locations on Juno
+
+For users running this pipeline on Juno, the main directories are:
+
+- **Pipeline Directory (Penguin code and workflow):**  
+  `/juno/cmo/bergerlab/sumans/Project_ecDNA/Production/penguin`
+
+- **Project Resources and Legacy Code:**  
+  `/juno/cmo/bergerlab/sumans/Project_ecDNA/Production`
+
+These locations contain the full workflow, reference files, utility scripts, and older versions of the pipeline.
+
 ### Dependencies
 
 The environment yml file for the scripts may be found in ```/envs/echo.yml```
@@ -25,69 +43,82 @@ conda activate ecDNA_analysis
 
 Note: You may need to ask for permission to get facetsAPI access. Please visit https://github.com/mskcc/facetsAPI and contact Adam Price if you need access.
 
-### Examples
 
-You can see example inputs and outputs in ```/example```.
+### Step 0: Prepare Inputs and Configure the Project
 
-In ```/example/output```, ```facets_cbioportal_merged.tsv``` is the facets and cBioPortal sample data, which contains annotated data on the inputs.
+For this step, you only need two things:
 
-```merged.ECHO_results.csv``` is for ECHO results; one line for each gene called per sample, and special lines denoting when a sample has no genes called. 
+• A list of DMP sample IDs (one ID per line in a text file)  
+• A config file
 
-```merged.FACETS_gene_results.tsv``` is the facets annotations for each gene called by ECHO. If the echo results did not have any amplifications, the corresponding line will appear in this document, in the "gene" column. If the gene/sample pair is not in the FACETS database, each column past "gene" will be empty.
+Use the global config file already provided in the parent directory:
 
-### Step 0: Configure Config File
+`penguin/global_config_bash.rc`
 
-Please first run 
+Open this file and edit only one field:
 
-```
-cp /juno/cmo/bergerlab/yuk3/Project_ecDNA/references/ /data/input/ -r
-```
+- `projectName` – set this to whatever name you want for the run.
 
-To get all of the input data.
+Once you set the projectName, all downstream outputs will automatically be created inside:
 
-The default config file is scripts/global_config_bash.rc.
-Edit ```projectName``` to the desired project name, and place a list of the sampleIds to run (separated by newlines) in the manifest folder (by default it is ```[dataDir]/input/manifest/[projectName]```). By default this folder does not exist, so you will need to create it. 
+`penguin/data/projects/[projectName]`
 
-You can do this by running
-
-```
-mkdir data/input/manifest/[projectName] 2>/dev/null
-```
-
-You can see an example sampleId list in ```/example/input```. Edit ```sampleFull``` to this path. All other paths and configurations can be changed for further customization, such as choosing to use the FACETS called tumor purity.
+No other changes are required in the config file unless you want to customize paths later.
 
 ### Step 1: Run the Parallelized ECHO Caller
 
 ```
 cd scripts
-sh generateECHOResults.sh $config_file $list_of_samples 
+sh generateecDNAResults.sh $config_file $list_of_samples 
 ```
 
 ### Step 2: Merge ECHO Results
 
-Please ensure that all jobs have concluded. You can check statuses in ```[dataDir]/flag/flag_[projectName]/echoCalls```. Ensure that no samples are still running.
 
 ```
-sh merge_echo_results.sh ../global_config_bash.rc
+sh merge_echo_results.sh $config_file
 ```
 
-### Step 3 (Optional, for FACETS Report): Run the Parallelized FACETS Caller
+### Step 3 Run the Parallelized FACETS Caller
 
 ```
-sh submit_facets_on_cluster.sh ../global_config_bash.rc
+sh submit_facets_on_cluster.sh $config_file
 ```
 
-### Step 4 (Optional, for FACETS REport): Merge FACETS Results
-
-Please ensure that all jobs have concluded. You can check statuses in ```[dataDir]/flag/flag_[projectName]/facetsCalls```.
+### Step 4 Merge FACETS Results
 
 ```
 sh merge_facets_results.sh ../global_config_bash.rc
 ```
 
+### Step 5 Generate Final Report
+
+```
+sh generate_final_report.sh ../global_config_bash.rc
+```
+
 ### Results
 
-The results can be found in the ```mergedOutputDirectory``` folder within the config file. This folder contains ECHO, FACETS, and pre-processing merged files.
+The final results for your run will be created automatically inside:
+
+`penguin/data/projects/[projectName]`
+
+If you want to directly review the final merged reports, you can find them here:
+
+`penguin/data/projects/[projectName]/output/merged`
+
+Additional useful folders include:
+
+- **Logs:**  
+  `penguin/data/projects/[projectName]/log`
+
+- **Flags:**  
+  `penguin/data/projects/[projectName]/flag`
+
+- **Manifest and stats:**  
+  `penguin/data/projects/[projectName]/manifest`
+
+Each run will populate these directories based on the projectName you set in the config file.
 
 ### Visualization Notebooks
 
